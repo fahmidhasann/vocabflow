@@ -1,0 +1,5 @@
+{
+  "name": "VocabFlow",
+  "description": "A personal vocabulary learning system using spaced repetition and active recall.",
+  "requestFramePermissions": []
+}
