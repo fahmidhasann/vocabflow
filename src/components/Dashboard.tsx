@@ -19,8 +19,8 @@ export function Dashboard({ onStartReview, onAddWord }: DashboardProps) {
       className="space-y-8"
     >
       <header>
-        <h1 className="text-3xl font-bold tracking-tight text-zinc-900">Good morning</h1>
-        <p className="text-zinc-500 mt-2">Here's your vocabulary progress.</p>
+        <h1 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">Good morning</h1>
+        <p className="text-zinc-500 dark:text-zinc-400 mt-2">Here's your vocabulary progress.</p>
       </header>
 
       {/* Hero Action Card */}
@@ -64,25 +64,25 @@ export function Dashboard({ onStartReview, onAddWord }: DashboardProps) {
           icon={<BookOpen className="w-5 h-5 text-blue-500" />}
           label="Total Words"
           value={stats.total}
-          color="bg-blue-50"
+          color="bg-blue-50 dark:bg-blue-900/30"
         />
         <StatCard
           icon={<Clock className="w-5 h-5 text-amber-500" />}
           label="New"
           value={stats.newWords}
-          color="bg-amber-50"
+          color="bg-amber-50 dark:bg-amber-900/30"
         />
         <StatCard
           icon={<PlayCircle className="w-5 h-5 text-indigo-500" />}
           label="Learning"
           value={stats.learning}
-          color="bg-indigo-50"
+          color="bg-indigo-50 dark:bg-indigo-900/30"
         />
         <StatCard
           icon={<CheckCircle className="w-5 h-5 text-emerald-500" />}
           label="Mastered"
           value={stats.mastered}
-          color="bg-emerald-50"
+          color="bg-emerald-50 dark:bg-emerald-900/30"
         />
       </div>
     </motion.div>
@@ -91,10 +91,10 @@ export function Dashboard({ onStartReview, onAddWord }: DashboardProps) {
 
 function StatCard({ icon, label, value, color }: { icon: React.ReactNode; label: string; value: number; color: string }) {
   return (
-    <div className="bg-white p-6 rounded-2xl border border-zinc-100 shadow-sm flex flex-col items-start">
+    <div className="bg-white dark:bg-zinc-900 p-6 rounded-2xl border border-zinc-100 dark:border-zinc-800 shadow-sm flex flex-col items-start">
       <div className={`p-3 rounded-xl ${color} mb-4`}>{icon}</div>
-      <span className="text-3xl font-bold text-zinc-900 mb-1">{value}</span>
-      <span className="text-sm font-medium text-zinc-500">{label}</span>
+      <span className="text-3xl font-bold text-zinc-900 dark:text-zinc-50 mb-1">{value}</span>
+      <span className="text-sm font-medium text-zinc-500 dark:text-zinc-400">{label}</span>
     </div>
   );
 }

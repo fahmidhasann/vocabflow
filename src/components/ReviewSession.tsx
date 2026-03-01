@@ -56,13 +56,13 @@ export function ReviewSession({ onComplete }: ReviewSessionProps) {
         <div className="w-24 h-24 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mb-6 shadow-inner">
           <CheckCircle2 className="w-12 h-12" />
         </div>
-        <h2 className="text-3xl font-bold text-zinc-900 mb-4">Session Complete!</h2>
-        <p className="text-zinc-500 text-lg max-w-md mb-8">
+        <h2 className="text-3xl font-bold text-zinc-900 dark:text-zinc-50 mb-4">Session Complete!</h2>
+        <p className="text-zinc-500 dark:text-zinc-400 text-lg max-w-md mb-8">
           You reviewed {reviewedCount} words today. Consistency is the key to mastery.
         </p>
         <button
           onClick={onComplete}
-          className="bg-zinc-900 text-white font-semibold py-3 px-8 rounded-xl shadow-sm hover:bg-zinc-800 transition-colors flex items-center gap-2"
+          className="bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 font-semibold py-3 px-8 rounded-xl shadow-sm hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-colors flex items-center gap-2"
         >
           Back to Dashboard
           <ArrowRight className="w-5 h-5" />
@@ -77,15 +77,15 @@ export function ReviewSession({ onComplete }: ReviewSessionProps) {
     <div className="max-w-2xl mx-auto flex flex-col min-h-[70vh]">
       <header className="flex items-center justify-between mb-8">
         <div>
-          <h2 className="text-xl font-bold text-zinc-900 flex items-center gap-2">
+          <h2 className="text-xl font-bold text-zinc-900 dark:text-zinc-50 flex items-center gap-2">
             <BrainCircuit className="w-6 h-6 text-emerald-600" />
             Daily Review
           </h2>
-          <p className="text-sm text-zinc-500 mt-1">
+          <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
             Word {currentIndex + 1} of {dueWords.length}
           </p>
         </div>
-        <div className="w-32 h-2 bg-zinc-200 rounded-full overflow-hidden">
+        <div className="w-32 h-2 bg-zinc-200 dark:bg-zinc-700 rounded-full overflow-hidden">
           <div
             className="h-full bg-emerald-500 transition-all duration-300"
             style={{ width: `${((currentIndex) / dueWords.length) * 100}%` }}
@@ -101,19 +101,19 @@ export function ReviewSession({ onComplete }: ReviewSessionProps) {
             animate={{ opacity: 1, y: 0, rotateX: 0 }}
             exit={{ opacity: 0, y: -20, rotateX: 10 }}
             transition={{ duration: 0.3 }}
-            className="bg-white rounded-3xl shadow-sm border border-zinc-200 p-8 md:p-12 flex-1 flex flex-col justify-center items-center text-center relative overflow-hidden"
+            className="bg-white dark:bg-zinc-900 rounded-3xl shadow-sm border border-zinc-200 dark:border-zinc-700 p-8 md:p-12 flex-1 flex flex-col justify-center items-center text-center relative overflow-hidden"
           >
             {/* Front of Card */}
             {!showAnswer ? (
               <>
-                <span className="text-sm font-medium text-zinc-400 uppercase tracking-widest mb-6">What does this mean?</span>
-                <h3 className="text-5xl md:text-6xl font-bold text-zinc-900 font-serif mb-8 tracking-tight">
+                <span className="text-sm font-medium text-zinc-400 dark:text-zinc-500 uppercase tracking-widest mb-6">What does this mean?</span>
+                <h3 className="text-5xl md:text-6xl font-bold text-zinc-900 dark:text-zinc-50 font-serif mb-8 tracking-tight">
                   {currentWord.word}
                 </h3>
                 {currentWord.context && (
-                  <div className="mt-8 p-6 bg-zinc-50 rounded-2xl border border-zinc-100 max-w-lg w-full">
-                    <p className="text-sm text-zinc-500 italic mb-2">Context</p>
-                    <p className="text-zinc-700 leading-relaxed">"{currentWord.context}"</p>
+                  <div className="mt-8 p-6 bg-zinc-50 dark:bg-zinc-800 rounded-2xl border border-zinc-100 dark:border-zinc-700 max-w-lg w-full">
+                    <p className="text-sm text-zinc-500 dark:text-zinc-400 italic mb-2">Context</p>
+                    <p className="text-zinc-700 dark:text-zinc-300 leading-relaxed">"{currentWord.context}"</p>
                   </div>
                 )}
               </>
@@ -121,8 +121,8 @@ export function ReviewSession({ onComplete }: ReviewSessionProps) {
               /* Back of Card */
               <div className="w-full text-left space-y-8">
                 <div>
-                  <h3 className="text-4xl font-bold text-zinc-900 font-serif mb-2">{currentWord.word}</h3>
-                  <p className="text-xl text-zinc-700 font-medium leading-relaxed">{currentWord.definition}</p>
+                  <h3 className="text-4xl font-bold text-zinc-900 dark:text-zinc-50 font-serif mb-2">{currentWord.word}</h3>
+                  <p className="text-xl text-zinc-700 dark:text-zinc-200 font-medium leading-relaxed">{currentWord.definition}</p>
                 </div>
 
                 {currentWord.personalExample && (
@@ -133,7 +133,7 @@ export function ReviewSession({ onComplete }: ReviewSessionProps) {
                 )}
 
                 {currentWord.keyword && (
-                  <div className="inline-block px-4 py-2 bg-zinc-100 rounded-lg text-sm font-medium text-zinc-600">
+                  <div className="inline-block px-4 py-2 bg-zinc-100 dark:bg-zinc-700 rounded-lg text-sm font-medium text-zinc-600 dark:text-zinc-400">
                     Keyword: {currentWord.keyword}
                   </div>
                 )}
@@ -147,7 +147,7 @@ export function ReviewSession({ onComplete }: ReviewSessionProps) {
         {!showAnswer ? (
           <button
             onClick={() => setShowAnswer(true)}
-            className="w-full max-w-sm bg-zinc-900 text-white font-semibold py-4 px-8 rounded-2xl shadow-lg shadow-zinc-900/20 hover:bg-zinc-800 transition-all text-lg focus:ring-4 focus:ring-zinc-200"
+            className="w-full max-w-sm bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 font-semibold py-4 px-8 rounded-2xl shadow-lg shadow-zinc-900/20 hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-all text-lg focus:ring-4 focus:ring-zinc-200 dark:focus:ring-zinc-700"
           >
             Show Answer
           </button>

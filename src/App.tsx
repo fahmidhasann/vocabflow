@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTheme } from './hooks/useTheme';
 import { Layout } from './components/Layout';
 import { Dashboard } from './components/Dashboard';
 import { AddWordForm } from './components/AddWordForm';
@@ -8,13 +9,14 @@ import { Settings } from './components/Settings';
 import { useVocabulary } from './hooks/useVocabulary';
 
 export default function App() {
+  useTheme();
   const { isLoaded } = useVocabulary();
   const [activeTab, setActiveTab] = useState('dashboard');
   const [isReviewing, setIsReviewing] = useState(false);
 
   if (!isLoaded) {
     return (
-      <div className="flex h-screen items-center justify-center bg-zinc-50">
+      <div className="flex h-screen items-center justify-center bg-zinc-50 dark:bg-zinc-950">
         <div className="w-12 h-12 border-4 border-emerald-200 border-t-emerald-600 rounded-full animate-spin"></div>
       </div>
     );
@@ -22,7 +24,7 @@ export default function App() {
 
   if (isReviewing) {
     return (
-      <div className="min-h-screen bg-zinc-50 p-4 md:p-8">
+      <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 p-4 md:p-8">
         <ReviewSession onComplete={() => setIsReviewing(false)} />
       </div>
     );

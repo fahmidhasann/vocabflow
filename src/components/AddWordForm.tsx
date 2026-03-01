@@ -63,17 +63,17 @@ export function AddWordForm({ onAdded }: { onAdded: () => void }) {
     <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
-      className="max-w-2xl mx-auto bg-white p-8 rounded-3xl shadow-sm border border-zinc-100"
+      className="max-w-2xl mx-auto bg-white dark:bg-zinc-900 p-8 rounded-3xl shadow-sm border border-zinc-100 dark:border-zinc-800"
     >
       <header className="mb-8">
-        <h2 className="text-2xl font-bold text-zinc-900">Add a New Word</h2>
-        <p className="text-zinc-500 mt-2">Save words the moment you encounter them.</p>
+        <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">Add a New Word</h2>
+        <p className="text-zinc-500 dark:text-zinc-400 mt-2">Save words the moment you encounter them.</p>
       </header>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
-            <label htmlFor="word" className="block text-sm font-medium text-zinc-700">
+            <label htmlFor="word" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
               Word <span className="text-red-500">*</span>
             </label>
             <input
@@ -82,7 +82,7 @@ export function AddWordForm({ onAdded }: { onAdded: () => void }) {
               value={word}
               onChange={(e) => setWord(e.target.value)}
               placeholder="e.g., Ephemeral"
-              className="w-full px-4 py-3 rounded-xl border border-zinc-200 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all text-lg font-serif"
+              className="w-full px-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-100 dark:placeholder-zinc-500 focus:ring-2 focus:ring-emerald-500 dark:focus:ring-emerald-500 focus:border-emerald-500 dark:focus:border-emerald-500 outline-none transition-all text-lg font-serif"
               required
             />
             <button
@@ -101,7 +101,7 @@ export function AddWordForm({ onAdded }: { onAdded: () => void }) {
           </div>
 
           <div className="space-y-2">
-            <label htmlFor="definition" className="block text-sm font-medium text-zinc-700">
+            <label htmlFor="definition" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
               Definition (in your words) <span className="text-red-500">*</span>
             </label>
             <input
@@ -110,14 +110,14 @@ export function AddWordForm({ onAdded }: { onAdded: () => void }) {
               value={definition}
               onChange={(e) => setDefinition(e.target.value)}
               placeholder="Lasting for a very short time"
-              className="w-full px-4 py-3 rounded-xl border border-zinc-200 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all"
+              className="w-full px-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-100 dark:placeholder-zinc-500 focus:ring-2 focus:ring-emerald-500 dark:focus:ring-emerald-500 focus:border-emerald-500 dark:focus:border-emerald-500 outline-none transition-all"
               required
             />
           </div>
         </div>
 
         <div className="space-y-2">
-          <label htmlFor="personalExample" className="block text-sm font-medium text-zinc-700">
+          <label htmlFor="personalExample" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
             Personal Example (Make it stick)
           </label>
           <textarea
@@ -125,12 +125,12 @@ export function AddWordForm({ onAdded }: { onAdded: () => void }) {
             value={personalExample}
             onChange={(e) => setPersonalExample(e.target.value)}
             placeholder="My motivation to go to the gym is often ephemeral."
-            className="w-full px-4 py-3 rounded-xl border border-zinc-200 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all min-h-[100px] resize-y"
+            className="w-full px-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-100 dark:placeholder-zinc-500 focus:ring-2 focus:ring-emerald-500 dark:focus:ring-emerald-500 focus:border-emerald-500 dark:focus:border-emerald-500 outline-none transition-all min-h-[100px] resize-y"
           />
         </div>
 
         <div className="space-y-2">
-          <label htmlFor="keyword" className="block text-sm font-medium text-zinc-700">
+          <label htmlFor="keyword" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
             Keyword / Mnemonic (Optional)
           </label>
           <input
@@ -139,7 +139,7 @@ export function AddWordForm({ onAdded }: { onAdded: () => void }) {
             value={keyword}
             onChange={(e) => setKeyword(e.target.value)}
             placeholder="e.g., 'phantom' - here today, gone tomorrow"
-            className="w-full px-4 py-3 rounded-xl border border-zinc-200 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all"
+            className="w-full px-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-100 dark:placeholder-zinc-500 focus:ring-2 focus:ring-emerald-500 dark:focus:ring-emerald-500 focus:border-emerald-500 dark:focus:border-emerald-500 outline-none transition-all"
           />
         </div>
 
@@ -168,7 +168,7 @@ export function AddWordForm({ onAdded }: { onAdded: () => void }) {
           </div>
           <button
             type="submit"
-            className="bg-zinc-900 text-white font-semibold py-3 px-8 rounded-xl shadow-sm hover:bg-zinc-800 transition-colors focus:ring-4 focus:ring-zinc-200"
+            className="bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 font-semibold py-3 px-8 rounded-xl shadow-sm hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-colors focus:ring-4 focus:ring-zinc-200 dark:focus:ring-zinc-700"
           >
             Save Word
           </button>
