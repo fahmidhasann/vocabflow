@@ -9,15 +9,16 @@ interface ReviewSessionProps {
 }
 
 export function ReviewSession({ onComplete }: ReviewSessionProps) {
-  const { getDueWords, processReview } = useVocabulary();
+  const { getDueWords, processReview, isLoaded } = useVocabulary();
   const [dueWords, setDueWords] = useState<WordEntry[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showAnswer, setShowAnswer] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
   const [reviewedCount, setReviewedCount] = useState(0);
 
-  // Initialize session
+  // Initialize session — wait until data is loaded to avoid treating empty words as "no reviews"
   useEffect(() => {
+    if (!isLoaded) return;
     const words = getDueWords();
     // Shuffle words for variety
     const shuffled = [...words].sort(() => Math.random() - 0.5);
@@ -25,7 +26,7 @@ export function ReviewSession({ onComplete }: ReviewSessionProps) {
     if (shuffled.length === 0) {
       setIsFinished(true);
     }
-  }, [getDueWords]);
+  }, [getDueWords, isLoaded]);
 
   const currentWord = dueWords[currentIndex];
 
