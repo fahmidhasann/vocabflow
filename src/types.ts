@@ -1,5 +1,15 @@
 export type WordStatus = 'new' | 'learning' | 'mastered';
 
+export type CategoryColor = 'emerald' | 'blue' | 'purple' | 'red' | 'amber' | 'pink' | 'cyan';
+
+export interface Category {
+  id: string;
+  name: string;
+  description?: string;
+  color?: CategoryColor;
+  createdAt: number;
+}
+
 export interface WordEntry {
   id: string;
   word: string;
@@ -7,6 +17,7 @@ export interface WordEntry {
   context?: string;
   personalExample: string;
   keyword?: string;
+  categoryId?: string; // NEW: Reference to category
 
   // Spaced Repetition System (SRS) Data
   status: WordStatus;

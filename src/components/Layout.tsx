@@ -1,4 +1,4 @@
-import { Home, PlusCircle, BookOpen, Settings, Sun, Moon } from 'lucide-react';
+import { Home, PlusCircle, BookOpen, Settings, Sun, Moon, TrendingUp, FolderOpen } from 'lucide-react';
 import { useTheme } from '../hooks/useTheme';
 
 interface LayoutProps {
@@ -13,6 +13,8 @@ export function Layout({ children, activeTab, setActiveTab }: LayoutProps) {
     { id: 'dashboard', label: 'Dashboard', icon: Home },
     { id: 'add', label: 'Add Word', icon: PlusCircle },
     { id: 'list', label: 'My Words', icon: BookOpen },
+    { id: 'categories', label: 'Categories', icon: FolderOpen },
+    { id: 'analytics', label: 'Analytics', icon: TrendingUp },
     { id: 'settings', label: 'Settings', icon: Settings },
   ];
 
@@ -64,7 +66,7 @@ export function Layout({ children, activeTab, setActiveTab }: LayoutProps) {
       </main>
 
       {/* Mobile Bottom Nav */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-zinc-900 border-t border-zinc-200 dark:border-zinc-700 flex justify-around p-2 pb-safe">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-zinc-900 border-t border-zinc-200 dark:border-zinc-700 flex justify-around p-2 pb-safe overflow-x-auto">
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive = activeTab === item.id;
@@ -72,7 +74,7 @@ export function Layout({ children, activeTab, setActiveTab }: LayoutProps) {
             <button
               key={item.id}
               onClick={() => setActiveTab(item.id)}
-              className={`flex flex-col items-center justify-center w-16 h-14 rounded-xl transition-colors ${
+              className={`flex flex-col items-center justify-center w-16 h-14 rounded-xl transition-colors flex-shrink-0 ${
                 isActive ? 'text-emerald-600 dark:text-emerald-400' : 'text-zinc-500 dark:text-zinc-400'
               }`}
             >

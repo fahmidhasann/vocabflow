@@ -1,15 +1,16 @@
 import { useState } from 'react';
-import { useVocabulary } from '../hooks/useVocabulary';
+import { useVocabulary } from '../contexts/VocabularyContext';
 import { motion } from 'motion/react';
 import { CheckCircle2, XCircle, Sparkles, Loader2 } from 'lucide-react';
 import { getWordDetails } from '../services/geminiService';
 
 export function AddWordForm({ onAdded }: { onAdded: () => void }) {
-  const { addWord } = useVocabulary();
+  const { addWord, categories } = useVocabulary();
   const [word, setWord] = useState('');
   const [definition, setDefinition] = useState('');
   const [personalExample, setPersonalExample] = useState('');
   const [keyword, setKeyword] = useState('');
+  const [categoryId, setCategoryId] = useState('');
   const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [isGenerating, setIsGenerating] = useState(false);
 
@@ -46,6 +47,7 @@ export function AddWordForm({ onAdded }: { onAdded: () => void }) {
       definition: definition.trim(),
       personalExample: personalExample.trim(),
       keyword: keyword.trim(),
+      categoryId: categoryId || undefined,
     });
 
     setStatus('success');
@@ -55,6 +57,7 @@ export function AddWordForm({ onAdded }: { onAdded: () => void }) {
       setDefinition('');
       setPersonalExample('');
       setKeyword('');
+      setCategoryId('');
       onAdded();
     }, 1500);
   };
@@ -142,6 +145,27 @@ export function AddWordForm({ onAdded }: { onAdded: () => void }) {
             className="w-full px-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-100 dark:placeholder-zinc-500 focus:ring-2 focus:ring-emerald-500 dark:focus:ring-emerald-500 focus:border-emerald-500 dark:focus:border-emerald-500 outline-none transition-all"
           />
         </div>
+
+        {categories.length > 0 && (
+          <div className="space-y-2">
+            <label htmlFor="category" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+              Category (Optional)
+            </label>
+            <select
+              id="category"
+              value={categoryId}
+              onChange={(e) => setCategoryId(e.target.value)}
+              className="w-full px-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-100 focus:ring-2 focus:ring-emerald-500 dark:focus:ring-emerald-500 focus:border-emerald-500 dark:focus:border-emerald-500 outline-none transition-all"
+            >
+              <option value="">No category</option>
+              {categories.map((cat) => (
+                <option key={cat.id} value={cat.id}>
+                  {cat.name}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
 
         <div className="pt-4 flex items-center justify-between">
           <div className="flex-1">

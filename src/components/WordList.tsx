@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useVocabulary } from '../hooks/useVocabulary';
+import { useVocabulary } from '../contexts/VocabularyContext';
 import { Search, Trash2, ChevronDown, ChevronUp } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { WordEntry } from '../types';

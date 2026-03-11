@@ -1,6 +1,6 @@
 import React from 'react';
-import { PlayCircle, BookOpen, CheckCircle, Clock } from 'lucide-react';
-import { useVocabulary } from '../hooks/useVocabulary';
+import { PlayCircle, BookOpen, CheckCircle, Clock, FolderOpen } from 'lucide-react';
+import { useVocabulary } from '../contexts/VocabularyContext';
 import { motion } from 'motion/react';
 
 interface DashboardProps {
@@ -9,7 +9,7 @@ interface DashboardProps {
 }
 
 export function Dashboard({ onStartReview, onAddWord }: DashboardProps) {
-  const { getStats } = useVocabulary();
+  const { getStats, categories, getCategoryStats } = useVocabulary();
   const stats = getStats();
 
   return (
@@ -85,6 +85,73 @@ export function Dashboard({ onStartReview, onAddWord }: DashboardProps) {
           color="bg-emerald-50 dark:bg-emerald-900/30"
         />
       </div>
+
+      {/* Category Stats Section */}
+      {categories.length > 0 && (
+        <div>
+          <h2 className="text-xl font-bold text-zinc-900 dark:text-zinc-50 mb-4 flex items-center gap-2">
+            <FolderOpen className="w-5 h-5" />
+            Category Breakdown
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {categories.map((category) => {
+              const categoryStats = getCategoryStats(category.id);
+              return (
+                <motion.div
+                  key={category.id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="bg-white dark:bg-zinc-900 p-6 rounded-2xl border border-zinc-100 dark:border-zinc-800 shadow-sm"
+                >
+                  <div className="flex items-start justify-between mb-4">
+                    <div>
+                      <h3 className="font-semibold text-zinc-900 dark:text-zinc-50">
+                        {category.name}
+                      </h3>
+                      {category.description && (
+                        <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                          {category.description}
+                        </p>
+                      )}
+                    </div>
+                    {category.color && (
+                      <div
+                        className={`w-3 h-3 rounded-full flex-shrink-0 bg-${category.color}-500`}
+                      />
+                    )}
+                  </div>
+                  <div className="grid grid-cols-3 gap-2 text-sm">
+                    <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg">
+                      <div className="text-lg font-bold text-blue-600 dark:text-blue-400">
+                        {categoryStats.total}
+                      </div>
+                      <div className="text-xs text-zinc-500 dark:text-zinc-400">Total</div>
+                    </div>
+                    <div className="bg-amber-50 dark:bg-amber-900/20 p-3 rounded-lg">
+                      <div className="text-lg font-bold text-amber-600 dark:text-amber-400">
+                        {categoryStats.new}
+                      </div>
+                      <div className="text-xs text-zinc-500 dark:text-zinc-400">New</div>
+                    </div>
+                    <div className="bg-indigo-50 dark:bg-indigo-900/20 p-3 rounded-lg">
+                      <div className="text-lg font-bold text-indigo-600 dark:text-indigo-400">
+                        {categoryStats.learning}
+                      </div>
+                      <div className="text-xs text-zinc-500 dark:text-zinc-400">Learning</div>
+                    </div>
+                  </div>
+                  <div className="mt-3 bg-emerald-50 dark:bg-emerald-900/20 p-3 rounded-lg">
+                    <div className="text-lg font-bold text-emerald-600 dark:text-emerald-400">
+                      {categoryStats.mastered}
+                    </div>
+                    <div className="text-xs text-zinc-500 dark:text-zinc-400">Mastered</div>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
+        </div>
+      )}
     </motion.div>
   );
 }

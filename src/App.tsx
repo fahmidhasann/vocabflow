@@ -1,14 +1,20 @@
 import { useState } from 'react';
 import { useTheme } from './hooks/useTheme';
+import { VocabularyProvider, useVocabulary } from './contexts/VocabularyContext';
 import { Layout } from './components/Layout';
 import { Dashboard } from './components/Dashboard';
 import { AddWordForm } from './components/AddWordForm';
 import { ReviewSession } from './components/ReviewSession';
 import { WordList } from './components/WordList';
+import { CategoryManager } from './components/CategoryManager';
 import { Settings } from './components/Settings';
-import { useVocabulary } from './hooks/useVocabulary';
+import { Analytics } from './components/Analytics';
 
-export default function App() {
+/**
+ * AppContent component that uses the VocabularyContext.
+ * This is wrapped by VocabularyProvider at the root level.
+ */
+function AppContent() {
   useTheme();
   const { isLoaded } = useVocabulary();
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -40,7 +46,21 @@ export default function App() {
       )}
       {activeTab === 'add' && <AddWordForm onAdded={() => setActiveTab('list')} />}
       {activeTab === 'list' && <WordList />}
+      {activeTab === 'categories' && <CategoryManager />}
+      {activeTab === 'analytics' && <Analytics />}
       {activeTab === 'settings' && <Settings />}
     </Layout>
+  );
+}
+
+/**
+ * Root App component wrapped with VocabularyProvider.
+ * Ensures single source of truth for vocabulary state across all components.
+ */
+export default function App() {
+  return (
+    <VocabularyProvider>
+      <AppContent />
+    </VocabularyProvider>
   );
 }

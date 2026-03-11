@@ -1,6 +1,6 @@
 import { motion } from 'motion/react';
 import { Download, Trash2, AlertTriangle } from 'lucide-react';
-import { useVocabulary } from '../hooks/useVocabulary';
+import { useVocabulary } from '../contexts/VocabularyContext';
 import { useTheme } from '../hooks/useTheme';
 
 export function Settings() {

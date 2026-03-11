@@ -1,8 +1,9 @@
 import { useState, useEffect, useCallback } from 'react';
-import { WordEntry, ReviewRating, WordStatus } from '../types';
+import { WordEntry, ReviewRating, WordStatus, Category, CategoryColor } from '../types';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
 
 const STORAGE_KEY = 'vocabflow_words';
+const CATEGORIES_STORAGE_KEY = 'vocabflow_categories';
 
 // Supabase row shape (snake_case columns)
 type WordRow = {
@@ -19,7 +20,17 @@ type WordRow = {
   consecutive_correct: number;
   created_at: number;
   last_reviewed_at: number | null;
+  category_id?: string | null;
 };
+
+// Category row type - reserved for future category system implementation
+// type CategoryRow = {
+//   id: string;
+//   name: string;
+//   description: string | null;
+//   color: string | null;
+//   created_at: number;
+// };
 
 function rowToEntry(row: WordRow): WordEntry {
   return {
@@ -29,6 +40,7 @@ function rowToEntry(row: WordRow): WordEntry {
     context: row.context ?? undefined,
     personalExample: row.personal_example,
     keyword: row.keyword ?? undefined,
+    categoryId: row.category_id ?? undefined,
     status: row.status as WordStatus,
     nextReviewDate: row.next_review_date,
     interval: row.interval,
@@ -54,8 +66,30 @@ function entryToRow(entry: WordEntry): WordRow {
     consecutive_correct: entry.consecutiveCorrect,
     created_at: entry.createdAt,
     last_reviewed_at: entry.lastReviewedAt ?? null,
+    category_id: entry.categoryId ?? null,
   };
 }
+
+// Category conversion functions - reserved for future category system implementation
+// function rowToCategory(row: CategoryRow): Category {
+//   return {
+//     id: row.id,
+//     name: row.name,
+//     description: row.description ?? undefined,
+//     color: (row.color as CategoryColor) ?? undefined,
+//     createdAt: row.created_at,
+//   };
+// }
+// 
+// function categoryToRow(category: Category): CategoryRow {
+//   return {
+//     id: category.id,
+//     name: category.name,
+//     description: category.description ?? null,
+//     color: category.color ?? null,
+//     created_at: category.createdAt,
+//   };
+// }
 
 // Helper to get start of day for accurate daily comparisons
 const getStartOfDay = (date: number = Date.now()) => {
@@ -66,6 +100,7 @@ const getStartOfDay = (date: number = Date.now()) => {
 
 export function useVocabulary() {
   const [words, setWords] = useState<WordEntry[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
 
   // Load data: prefer Supabase if configured, else localStorage
@@ -112,12 +147,29 @@ export function useVocabulary() {
     })();
   }, []);
 
+  // Load categories from localStorage
+  useEffect(() => {
+    const stored = localStorage.getItem(CATEGORIES_STORAGE_KEY);
+    if (stored) {
+      try {
+        setCategories(JSON.parse(stored));
+      } catch (e) {
+        console.error('Failed to parse stored categories', e);
+      }
+    }
+  }, []);
+
   // Always cache to localStorage (fast reloads + offline fallback)
   useEffect(() => {
     if (isLoaded) {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(words));
     }
   }, [words, isLoaded]);
+
+  // Cache categories to localStorage
+  useEffect(() => {
+    localStorage.setItem(CATEGORIES_STORAGE_KEY, JSON.stringify(categories));
+  }, [categories]);
 
   const addWord = useCallback((newWord: Omit<WordEntry, 'id' | 'status' | 'nextReviewDate' | 'interval' | 'easeFactor' | 'consecutiveCorrect' | 'createdAt'>) => {
     const word: WordEntry = {
@@ -243,8 +295,59 @@ export function useVocabulary() {
     return { total, newWords, learning, mastered, dueToday };
   }, [words, getDueWords]);
 
+  // ===== CATEGORY MANAGEMENT =====
+  const addCategory = useCallback((name: string, description?: string, color?: CategoryColor) => {
+    const category: Category = {
+      id: crypto.randomUUID(),
+      name,
+      description,
+      color,
+      createdAt: Date.now(),
+    };
+    setCategories((prev) => [...prev, category]);
+  }, []);
+
+  const updateCategory = useCallback((id: string, updates: Partial<Category>) => {
+    setCategories((prev) =>
+      prev.map((c) => (c.id === id ? { ...c, ...updates } : c))
+    );
+  }, []);
+
+  const deleteCategory = useCallback((id: string) => {
+    setCategories((prev) => prev.filter((c) => c.id !== id));
+    // Remove categoryId from all words in this category
+    setWords((prev) =>
+      prev.map((w) => (w.categoryId === id ? { ...w, categoryId: undefined } : w))
+    );
+  }, []);
+
+  const getWordsByCategory = useCallback(
+    (categoryId: string) => {
+      return words.filter((w) => w.categoryId === categoryId);
+    },
+    [words]
+  );
+
+  const getCategoryStats = useCallback(
+    (categoryId: string) => {
+      const wordsInCategory = getWordsByCategory(categoryId);
+      return {
+        total: wordsInCategory.length,
+        mastered: wordsInCategory.filter((w) => w.status === 'mastered').length,
+        learning: wordsInCategory.filter((w) => w.status === 'learning').length,
+        new: wordsInCategory.filter((w) => w.status === 'new').length,
+      };
+    },
+    [getWordsByCategory]
+  );
+
+  const getUncategorizedWords = useCallback(() => {
+    return words.filter((w) => !w.categoryId);
+  }, [words]);
+
   return {
     words,
+    categories,
     isLoaded,
     addWord,
     updateWord,
@@ -252,5 +355,11 @@ export function useVocabulary() {
     processReview,
     getDueWords,
     getStats,
+    addCategory,
+    updateCategory,
+    deleteCategory,
+    getWordsByCategory,
+    getCategoryStats,
+    getUncategorizedWords,
   };
 }
