@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { useVocabulary } from '../hooks/useVocabulary';
+import { useState, useEffect, useCallback } from 'react';
+import { useVocabulary } from '../contexts/VocabularyContext';
 import { WordEntry, ReviewRating } from '../types';
 import { motion, AnimatePresence } from 'motion/react';
 import { CheckCircle2, XCircle, RefreshCw, ArrowRight, BrainCircuit } from 'lucide-react';
@@ -30,21 +30,79 @@ export function ReviewSession({ onComplete }: ReviewSessionProps) {
 
   const currentWord = dueWords[currentIndex];
 
-  const handleRating = (rating: ReviewRating) => {
+  const handleRating = useCallback((rating: ReviewRating) => {
     if (!currentWord) return;
     processReview(currentWord.id, rating);
     setReviewedCount((prev) => prev + 1);
     handleNext();
-  };
+  }, [currentWord, processReview]);
 
-  const handleNext = () => {
+  const handleNext = useCallback(() => {
     setShowAnswer(false);
     if (currentIndex < dueWords.length - 1) {
       setCurrentIndex((prev) => prev + 1);
     } else {
       setIsFinished(true);
     }
-  };
+  }, [currentIndex, dueWords.length]);
+
+  // Keyboard shortcuts handler
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Only respond to keyboard shortcuts if not typing in an input field
+      const activeElement = document.activeElement;
+      const isTypingInInput =
+        activeElement?.tagName === 'INPUT' ||
+        activeElement?.tagName === 'TEXTAREA';
+
+      if (isTypingInInput) return;
+
+      // Spacebar: toggle answer
+      if (e.code === 'Space') {
+        e.preventDefault();
+        setShowAnswer((prev) => !prev);
+      }
+      // 1: rate as "again"
+      else if (e.key === '1') {
+        e.preventDefault();
+        if (showAnswer && currentWord) {
+          handleRating('again');
+        }
+      }
+      // 2: rate as "hard"
+      else if (e.key === '2') {
+        e.preventDefault();
+        if (showAnswer && currentWord) {
+          handleRating('hard');
+        }
+      }
+      // 3: rate as "good"
+      else if (e.key === '3') {
+        e.preventDefault();
+        if (showAnswer && currentWord) {
+          handleRating('good');
+        }
+      }
+      // 4: rate as "easy"
+      else if (e.key === '4') {
+        e.preventDefault();
+        if (showAnswer && currentWord) {
+          handleRating('easy');
+        }
+      }
+      // n: advance to next word
+      else if (e.key === 'n' || e.key === 'N') {
+        e.preventDefault();
+        if (showAnswer && currentWord) {
+          handleNext();
+          setShowAnswer(false);
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [showAnswer, currentWord, handleRating, handleNext]);
 
   if (isFinished) {
     return (
@@ -160,6 +218,7 @@ export function ReviewSession({ onComplete }: ReviewSessionProps) {
             <RatingButton
               rating="again"
               label="Forgot"
+              shortcut="1"
               icon={<RefreshCw className="w-5 h-5" />}
               color="bg-red-50 text-red-700 border-red-200 hover:bg-red-100"
               onClick={() => handleRating('again')}
@@ -167,6 +226,7 @@ export function ReviewSession({ onComplete }: ReviewSessionProps) {
             <RatingButton
               rating="hard"
               label="Hard"
+              shortcut="2"
               icon={<XCircle className="w-5 h-5" />}
               color="bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100"
               onClick={() => handleRating('hard')}
@@ -174,6 +234,7 @@ export function ReviewSession({ onComplete }: ReviewSessionProps) {
             <RatingButton
               rating="good"
               label="Good"
+              shortcut="3"
               icon={<CheckCircle2 className="w-5 h-5" />}
               color="bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100"
               onClick={() => handleRating('good')}
@@ -181,18 +242,38 @@ export function ReviewSession({ onComplete }: ReviewSessionProps) {
             <RatingButton
               rating="easy"
               label="Easy"
+              shortcut="4"
               icon={<ArrowRight className="w-5 h-5" />}
               color="bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100"
               onClick={() => handleRating('easy')}
             />
           </motion.div>
         )}
+
+        {showAnswer && (
+          <div className="mt-4 text-center text-xs text-zinc-500 dark:text-zinc-400">
+            <p>Press <kbd className="px-2 py-1 bg-zinc-200 dark:bg-zinc-700 rounded text-zinc-900 dark:text-zinc-100 font-mono">Space</kbd> to hide • <kbd className="px-2 py-1 bg-zinc-200 dark:bg-zinc-700 rounded text-zinc-900 dark:text-zinc-100 font-mono">N</kbd> to skip</p>
+          </div>
+        )}
       </div>
     </div>
   );
 }
 
-function RatingButton({ label, icon, color, onClick }: { rating: ReviewRating; label: string; icon: React.ReactNode; color: string; onClick: () => void }) {
+function RatingButton({
+  label,
+  shortcut,
+  icon,
+  color,
+  onClick,
+}: {
+  rating: ReviewRating;
+  label: string;
+  shortcut: string;
+  icon: React.ReactNode;
+  color: string;
+  onClick: () => void;
+}) {
   return (
     <button
       onClick={onClick}
@@ -200,6 +281,7 @@ function RatingButton({ label, icon, color, onClick }: { rating: ReviewRating; l
     >
       {icon}
       <span className="font-semibold">{label}</span>
+      <span className="text-xs opacity-70 font-mono">({shortcut})</span>
     </button>
   );
 }
