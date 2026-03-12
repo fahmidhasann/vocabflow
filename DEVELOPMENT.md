@@ -31,6 +31,9 @@ Help users master vocabulary through:
 src/
 ├── components/           # UI Components
 │   ├── Layout.tsx       # Navigation wrapper (sidebar + mobile nav)
+│   ├── MobileHeader.tsx # Mobile top bar with hamburger + dark mode toggle
+│   ├── MobileDrawer.tsx # Slide-out drawer menu (motion/react animation)
+│   ├── StickyActionBar.tsx # Mobile sticky footer with [Add Word] + [Settings]
 │   ├── Dashboard.tsx    # Stats & quick actions
 │   ├── ReviewSession.tsx# Flashcard review interface
 │   ├── AddWordForm.tsx  # Add new word form
@@ -63,7 +66,56 @@ src/
 ### Component Composition
 - **Tab-based navigation** (Dashboard, Add, List, Settings)
 - **Full-screen review session** isolates distraction
-- **Responsive:** Desktop sidebar, mobile bottom nav
+- **Responsive:** Desktop sidebar (≥ 768px), mobile hamburger menu (< 768px)
+
+### Mobile Navigation Architecture (v1.1)
+
+**Breakpoint:** `md` (768px) — Below this, mobile UI applies.
+
+#### New Components
+
+**1. MobileHeader.tsx**
+- Fixed top bar (40px with padding)
+- Logo: "VocabFlow" + Dark mode toggle + Hamburger menu
+- Visible only on mobile (`md:hidden`)
+- Icons: Sun, Moon, Menu from lucide-react
+
+**2. MobileDrawer.tsx**
+- Slide-out drawer (256px width, w-64)
+- Motion/react animation: Spring slide from left
+- Backdrop overlay with tap-to-close
+- Navigation items with active state highlight
+- Only on mobile (`md:hidden`)
+
+**3. StickyActionBar.tsx**
+- Fixed bottom sticky bar with [Add Word] (primary) + [Settings] (secondary)
+- Emerald primary button, gray secondary
+- Respects safe areas (notches)
+- Mobile-only (`md:hidden`)
+
+#### Layout Changes
+
+**Mobile (< 768px):**
+```
+┌─────────────────┐
+│ Header (☰ 🌙)   │ ← MobileHeader (pt-16 offset)
+├─────────────────┤
+│ Main Content    │ ← pb-24 bottom padding
+├─────────────────┤
+│ [+Add] [Settings]│ ← StickyActionBar
+└─────────────────┘
+```
+
+**Desktop (≥ 768px):**
+- Existing sidebar + main content (unchanged)
+- Mobile components hidden
+
+**Key Points:**
+- Reclaims ~80px of screen space on mobile
+- Drawer animation smooth (spring damping: 25)
+- Dark mode toggle in header + sidebar
+- No breaking changes to desktop
+- All Tailwind breakpoints: sm (640px), md (768px), lg (1024px)
 
 ### Data Model
 
