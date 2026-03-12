@@ -255,6 +255,13 @@ export function ReviewSession({ onComplete }: ReviewSessionProps) {
             <p>Press <kbd className="px-2 py-1 bg-zinc-200 dark:bg-zinc-700 rounded text-zinc-900 dark:text-zinc-100 font-mono">Space</kbd> to hide • <kbd className="px-2 py-1 bg-zinc-200 dark:bg-zinc-700 rounded text-zinc-900 dark:text-zinc-100 font-mono">N</kbd> to skip</p>
           </div>
         )}
+
+        <button
+          onClick={onComplete}
+          className="mt-6 px-4 py-2 text-sm font-medium text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200 border border-zinc-200 dark:border-zinc-700 rounded-lg hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors"
+        >
+          Exit Review
+        </button>
       </div>
     </div>
   );
