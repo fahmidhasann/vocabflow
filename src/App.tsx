@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useTheme } from './hooks/useTheme';
 import { VocabularyProvider, useVocabulary } from './contexts/VocabularyContext';
+import { AchievementToastProvider } from './contexts/AchievementToastContext';
 import { Layout } from './components/Layout';
 import { Dashboard } from './components/Dashboard';
 import { AddWordForm } from './components/AddWordForm';
@@ -9,6 +10,7 @@ import { WordList } from './components/WordList';
 import { CategoryManager } from './components/CategoryManager';
 import { Settings } from './components/Settings';
 import { Analytics } from './components/Analytics';
+import { Achievements } from './components/Achievements';
 
 /**
  * AppContent component that uses the VocabularyContext.
@@ -48,6 +50,7 @@ function AppContent() {
       {activeTab === 'list' && <WordList />}
       {activeTab === 'categories' && <CategoryManager />}
       {activeTab === 'analytics' && <Analytics />}
+      {activeTab === 'achievements' && <Achievements />}
       {activeTab === 'settings' && <Settings />}
     </Layout>
   );
@@ -60,7 +63,9 @@ function AppContent() {
 export default function App() {
   return (
     <VocabularyProvider>
-      <AppContent />
+      <AchievementToastProvider>
+        <AppContent />
+      </AchievementToastProvider>
     </VocabularyProvider>
   );
 }

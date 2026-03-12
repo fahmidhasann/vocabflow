@@ -1,9 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
-import { WordEntry, ReviewRating, WordStatus, Category, CategoryColor } from '../types';
+import { WordEntry, ReviewRating, WordStatus, Category, CategoryColor, Achievement, BadgeType } from '../types';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
 
 const STORAGE_KEY = 'vocabflow_words';
 const CATEGORIES_STORAGE_KEY = 'vocabflow_categories';
+const ACHIEVEMENTS_STORAGE_KEY = 'vocabflow_achievements';
 
 // Supabase row shape (snake_case columns)
 type WordRow = {
@@ -101,6 +102,7 @@ const getStartOfDay = (date: number = Date.now()) => {
 export function useVocabulary() {
   const [words, setWords] = useState<WordEntry[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [achievements, setAchievements] = useState<Achievement[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
 
   // Load data: prefer Supabase if configured, else localStorage
@@ -159,6 +161,18 @@ export function useVocabulary() {
     }
   }, []);
 
+  // Load achievements from localStorage
+  useEffect(() => {
+    const stored = localStorage.getItem(ACHIEVEMENTS_STORAGE_KEY);
+    if (stored) {
+      try {
+        setAchievements(JSON.parse(stored));
+      } catch (e) {
+        console.error('Failed to parse stored achievements', e);
+      }
+    }
+  }, []);
+
   // Always cache to localStorage (fast reloads + offline fallback)
   useEffect(() => {
     if (isLoaded) {
@@ -170,6 +184,18 @@ export function useVocabulary() {
   useEffect(() => {
     localStorage.setItem(CATEGORIES_STORAGE_KEY, JSON.stringify(categories));
   }, [categories]);
+
+  // Cache achievements to localStorage
+  useEffect(() => {
+    localStorage.setItem(ACHIEVEMENTS_STORAGE_KEY, JSON.stringify(achievements));
+  }, [achievements]);
+
+  // Check achievements whenever words or categories change (after reviews/updates)
+  useEffect(() => {
+    if (isLoaded && words.length > 0) {
+      checkAchievements();
+    }
+  }, [words.length, isLoaded]);
 
   const addWord = useCallback((newWord: Omit<WordEntry, 'id' | 'status' | 'nextReviewDate' | 'interval' | 'easeFactor' | 'consecutiveCorrect' | 'createdAt'>) => {
     const word: WordEntry = {
@@ -345,9 +371,202 @@ export function useVocabulary() {
     return words.filter((w) => !w.categoryId);
   }, [words]);
 
+  // ===== ACHIEVEMENT MANAGEMENT =====
+  const unlockAchievement = useCallback((badgeType: BadgeType, name: string, description: string, icon: string, category: 'streak' | 'mastery' | 'consistency' | 'milestone', tier?: 'bronze' | 'silver' | 'gold') => {
+    // Check if already unlocked
+    if (achievements.some((a) => a.id === badgeType)) {
+      return;
+    }
+
+    const achievement: Achievement = {
+      id: badgeType,
+      name,
+      description,
+      icon,
+      category,
+      tier,
+      unlockedAt: Date.now(),
+      criteria: {
+        type: badgeType,
+        value: 0,
+      },
+    };
+
+    setAchievements((prev) => [...prev, achievement]);
+  }, [achievements]);
+
+  // Calculate daily streak from review history
+  const calculateDailyStreak = useCallback(() => {
+    if (words.length === 0) return 0;
+
+    const reviewedByDay = new Map<string, boolean>();
+    
+    words.forEach((word) => {
+      if (word.lastReviewedAt) {
+        const day = getStartOfDay(word.lastReviewedAt);
+        reviewedByDay.set(day.toString(), true);
+      }
+    });
+
+    let streak = 0;
+    let currentDay = getStartOfDay();
+
+    while (reviewedByDay.has(currentDay.toString())) {
+      streak++;
+      currentDay -= 24 * 60 * 60 * 1000;
+    }
+
+    return streak;
+  }, [words]);
+
+  // Check all achievement criteria
+  const checkAchievements = useCallback(() => {
+    const dailyStreak = calculateDailyStreak();
+    const totalWords = words.length;
+    const perfectSessions = words.filter((w) => w.consecutiveCorrect > 0).length;
+    const reviewDaysCount = new Set(
+      words
+        .filter((w) => w.lastReviewedAt)
+        .map((w) => getStartOfDay(w.lastReviewedAt!).toString())
+    ).size;
+
+    // Streak achievements
+    if (dailyStreak >= 7 && !achievements.some((a) => a.id === 'streak_7')) {
+      unlockAchievement(
+        'streak_7',
+        'Week Warrior',
+        'Maintained a 7-day review streak',
+        '🔥',
+        'streak',
+        'bronze'
+      );
+    }
+
+    if (dailyStreak >= 30 && !achievements.some((a) => a.id === 'streak_30')) {
+      unlockAchievement(
+        'streak_30',
+        'Month Master',
+        'Maintained a 30-day review streak',
+        '🔥',
+        'streak',
+        'silver'
+      );
+    }
+
+    if (dailyStreak >= 100 && !achievements.some((a) => a.id === 'streak_100')) {
+      unlockAchievement(
+        'streak_100',
+        'Legendary Learner',
+        'Maintained a 100-day review streak',
+        '🔥',
+        'streak',
+        'gold'
+      );
+    }
+
+    // Word count milestones
+    if (totalWords >= 5 && !achievements.some((a) => a.id === 'first_steps_5')) {
+      unlockAchievement(
+        'first_steps_5',
+        'First Steps',
+        'Added 5 words to vocabulary',
+        '👣',
+        'milestone',
+        'bronze'
+      );
+    }
+
+    if (totalWords >= 25 && !achievements.some((a) => a.id === 'first_steps_25')) {
+      unlockAchievement(
+        'first_steps_25',
+        'Building Momentum',
+        'Added 25 words to vocabulary',
+        '👣',
+        'milestone',
+        'silver'
+      );
+    }
+
+    if (totalWords >= 100 && !achievements.some((a) => a.id === 'first_steps_100')) {
+      unlockAchievement(
+        'first_steps_100',
+        'Vocabulary Virtuoso',
+        'Added 100 words to vocabulary',
+        '👣',
+        'milestone',
+        'gold'
+      );
+    }
+
+    // Perfect session achievement
+    if (perfectSessions > 0 && !achievements.some((a) => a.id === 'perfect_session')) {
+      unlockAchievement(
+        'perfect_session',
+        'Flawless',
+        'Completed a perfect review session',
+        '⭐',
+        'mastery'
+      );
+    }
+
+    // Category mastery
+    categories.forEach((category) => {
+      const categoryWords = words.filter((w) => w.categoryId === category.id);
+      const masteredInCategory = categoryWords.filter((w) => w.status === 'mastered').length;
+      
+      if (categoryWords.length > 0 && masteredInCategory === categoryWords.length && categoryWords.length > 0) {
+        const masteryBadge: BadgeType = `category_master` as BadgeType;
+        if (!achievements.some((a) => a.id === masteryBadge)) {
+          unlockAchievement(
+            masteryBadge,
+            'Category Master',
+            `Mastered all words in ${category.name}`,
+            '🏆',
+            'mastery'
+          );
+        }
+      }
+    });
+
+    // Consistency achievements (review days count)
+    if (reviewDaysCount >= 7 && !achievements.some((a) => a.id === 'consistency_7')) {
+      unlockAchievement(
+        'consistency_7',
+        'Consistent Learner',
+        'Reviewed on 7 different days',
+        '📅',
+        'consistency',
+        'bronze'
+      );
+    }
+
+    if (reviewDaysCount >= 30 && !achievements.some((a) => a.id === 'consistency_30')) {
+      unlockAchievement(
+        'consistency_30',
+        'Dedicated Scholar',
+        'Reviewed on 30 different days',
+        '📅',
+        'consistency',
+        'silver'
+      );
+    }
+
+    if (reviewDaysCount >= 100 && !achievements.some((a) => a.id === 'consistency_100')) {
+      unlockAchievement(
+        'consistency_100',
+        'Eternal Student',
+        'Reviewed on 100 different days',
+        '📅',
+        'consistency',
+        'gold'
+      );
+    }
+  }, [words, categories, achievements, unlockAchievement]);
+
   return {
     words,
     categories,
+    achievements,
     isLoaded,
     addWord,
     updateWord,
@@ -361,5 +580,7 @@ export function useVocabulary() {
     getWordsByCategory,
     getCategoryStats,
     getUncategorizedWords,
+    unlockAchievement,
+    checkAchievements,
   };
 }

@@ -1,4 +1,4 @@
-import { Home, PlusCircle, BookOpen, Settings, Sun, Moon, TrendingUp, FolderOpen } from 'lucide-react';
+import { Home, PlusCircle, BookOpen, Settings, Sun, Moon, TrendingUp, FolderOpen, Trophy } from 'lucide-react';
 import { useTheme } from '../hooks/useTheme';
 
 interface LayoutProps {
@@ -15,6 +15,7 @@ export function Layout({ children, activeTab, setActiveTab }: LayoutProps) {
     { id: 'list', label: 'My Words', icon: BookOpen },
     { id: 'categories', label: 'Categories', icon: FolderOpen },
     { id: 'analytics', label: 'Analytics', icon: TrendingUp },
+    { id: 'achievements', label: 'Achievements', icon: Trophy },
     { id: 'settings', label: 'Settings', icon: Settings },
   ];
 
