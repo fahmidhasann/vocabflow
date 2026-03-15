@@ -74,22 +74,24 @@ export function WordForm({ initialData, onSave, saving, submitLabel = 'Save Word
         <div className="space-y-3">
           {meanings.map((m, i) => (
             <div key={i} className="flex gap-2 items-start">
-              <input
-                type="text"
-                value={m.partOfSpeech}
-                onChange={(e) => updateMeaning(i, 'partOfSpeech', e.target.value)}
-                className={`${inputClass} w-28 flex-shrink-0`}
-                placeholder="noun"
-              />
-              <input
-                type="text"
-                value={m.definition}
-                onChange={(e) => updateMeaning(i, 'definition', e.target.value)}
-                className={inputClass}
-                placeholder="Definition"
-              />
+              <div className="flex-1 flex flex-col gap-1">
+                <input
+                  type="text"
+                  value={m.partOfSpeech}
+                  onChange={(e) => updateMeaning(i, 'partOfSpeech', e.target.value)}
+                  className={inputClass}
+                  placeholder="Part of speech (e.g. noun)"
+                />
+                <input
+                  type="text"
+                  value={m.definition}
+                  onChange={(e) => updateMeaning(i, 'definition', e.target.value)}
+                  className={inputClass}
+                  placeholder="Definition"
+                />
+              </div>
               {meanings.length > 1 && (
-                <button type="button" onClick={() => removeMeaning(i)} className="text-red-500 hover:text-red-700 p-2" aria-label="Remove meaning">
+                <button type="button" onClick={() => removeMeaning(i)} className="text-red-500 hover:text-red-700 p-2 mt-1" aria-label="Remove meaning">
                   &times;
                 </button>
               )}
