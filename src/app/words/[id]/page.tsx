@@ -11,7 +11,7 @@ import { Button } from '@/components/ui/Button';
 
 export default function WordDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
-  const word = useWord(Number(id));
+  const word = useWord(id);
 
   if (word === undefined) {
     return <PageShell><LoadingSpinner /></PageShell>;

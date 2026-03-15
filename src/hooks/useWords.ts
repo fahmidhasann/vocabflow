@@ -1,42 +1,73 @@
 'use client';
 
-import { useLiveQuery } from 'dexie-react-hooks';
-import { db } from '@/lib/db';
+import { useState, useEffect } from 'react';
+import { createClient } from '@/lib/supabase/client';
+import { rowToWord, wordToInsert, wordToUpdate, type WordRow } from '@/lib/supabase/mappers';
 import type { Word, Meaning, SrsStage } from '@/types';
 import { newWordSrsFields } from '@/lib/srs';
 import { todayDateString } from '@/lib/utils';
 
 export function useWords(filter?: { stage?: SrsStage; search?: string }) {
-  const words = useLiveQuery(async () => {
-    const collection = db.words.orderBy('createdAt');
-    let results = await collection.reverse().toArray();
+  const [words, setWords] = useState<Word[] | undefined>(undefined);
 
-    if (filter?.stage) {
-      results = results.filter((w) => w.srsStage === filter.stage);
+  useEffect(() => {
+    const supabase = createClient();
+
+    async function fetch() {
+      let query = supabase
+        .from('words')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (filter?.stage) query = query.eq('srs_stage', filter.stage);
+      if (filter?.search) query = query.ilike('word', `%${filter.search}%`);
+
+      const { data } = await query;
+      setWords(data ? (data as WordRow[]).map(rowToWord) : []);
     }
-    if (filter?.search) {
-      const s = filter.search.toLowerCase();
-      results = results.filter((w) => w.word.toLowerCase().includes(s));
-    }
-    return results;
+
+    fetch();
   }, [filter?.stage, filter?.search]);
 
   return words;
 }
 
-export function useWord(id: number | undefined) {
-  return useLiveQuery(
-    () => (id ? db.words.get(id) : undefined),
-    [id]
-  );
+export function useWord(id: string | undefined) {
+  const [word, setWord] = useState<Word | undefined>(undefined);
+
+  useEffect(() => {
+    if (!id) return;
+    const supabase = createClient();
+    supabase
+      .from('words')
+      .select('*')
+      .eq('id', id)
+      .single()
+      .then(({ data }) => {
+        setWord(data ? rowToWord(data as WordRow) : undefined);
+      });
+  }, [id]);
+
+  return word;
 }
 
 export function useDueWords() {
-  return useLiveQuery(async () => {
+  const [words, setWords] = useState<Word[] | undefined>(undefined);
+
+  useEffect(() => {
+    const supabase = createClient();
     const today = todayDateString();
-    const all = await db.words.toArray();
-    return all.filter((w) => w.nextReviewDate <= today);
-  });
+
+    supabase
+      .from('words')
+      .select('*')
+      .lte('next_review_date', today)
+      .then(({ data }) => {
+        setWords(data ? (data as WordRow[]).map(rowToWord) : []);
+      });
+  }, []);
+
+  return words;
 }
 
 export async function addWord(data: {
@@ -45,20 +76,35 @@ export async function addWord(data: {
   meanings: Meaning[];
   example?: string;
   notes?: string;
-}): Promise<number> {
+}): Promise<string> {
+  const supabase = createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+
   const now = new Date().toISOString();
-  return db.words.add({
-    ...data,
-    ...newWordSrsFields(),
-    createdAt: now,
-    updatedAt: now,
-  });
+  const srsFields = newWordSrsFields();
+
+  const { data: row, error } = await supabase
+    .from('words')
+    .insert(wordToInsert({ ...data, ...srsFields }, user.id, now))
+    .select('id')
+    .single();
+
+  if (error) throw error;
+  return row.id;
 }
 
-export async function updateWord(id: number, data: Partial<Word>) {
-  return db.words.update(id, { ...data, updatedAt: new Date().toISOString() });
+export async function updateWord(id: string, data: Partial<Word>) {
+  const supabase = createClient();
+  const { error } = await supabase
+    .from('words')
+    .update(wordToUpdate(data))
+    .eq('id', id);
+  if (error) throw error;
 }
 
-export async function deleteWord(id: number) {
-  return db.words.delete(id);
+export async function deleteWord(id: string) {
+  const supabase = createClient();
+  const { error } = await supabase.from('words').delete().eq('id', id);
+  if (error) throw error;
 }

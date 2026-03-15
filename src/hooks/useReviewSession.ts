@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import { db } from '@/lib/db';
+import { createClient } from '@/lib/supabase/client';
+import { wordToUpdate, sessionToInsert } from '@/lib/supabase/mappers';
 import { calculateNextReview } from '@/lib/srs';
 import { todayDateString } from '@/lib/utils';
 import type { Word, Rating, ReviewSessionState } from '@/types';
@@ -37,26 +38,42 @@ export function useReviewSession() {
     const currentWord = words[currentIndex];
     if (!currentWord?.id) return;
 
+    const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
     // Update SRS fields
     const updates = calculateNextReview(currentWord, rating);
-    await db.words.update(currentWord.id, updates);
+    await supabase
+      .from('words')
+      .update(wordToUpdate(updates))
+      .eq('id', currentWord.id);
 
     const newRatings = { ...ratings, [currentWord.id]: rating };
     const nextIndex = currentIndex + 1;
 
     if (nextIndex >= words.length) {
-      // Session complete - save record
+      // Session complete — save record
       const duration = Math.round((Date.now() - session.startTime) / 1000);
-      await db.reviewSessions.add({
-        date: todayDateString(),
-        wordsReviewed: words.length,
-        ratings: newRatings,
-        duration,
-        completedAt: new Date().toISOString(),
-      });
+      await supabase.from('review_sessions').insert(
+        sessionToInsert(
+          {
+            date: todayDateString(),
+            wordsReviewed: words.length,
+            ratings: newRatings,
+            duration,
+            completedAt: new Date().toISOString(),
+          },
+          user.id
+        )
+      );
 
-      // Update streak
-      await db.appState.put({ key: 'lastReviewDate', value: todayDateString() });
+      // Update last review date
+      await supabase.from('app_state').upsert({
+        user_id: user.id,
+        key: 'lastReviewDate',
+        value: todayDateString(),
+      });
 
       setSession((s) => ({
         ...s,

@@ -6,7 +6,8 @@ import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Modal } from '@/components/ui/Modal';
 import { useToast } from '@/components/ui/Toast';
-import { db } from '@/lib/db';
+import { createClient } from '@/lib/supabase/client';
+import { wordToInsert, sessionToInsert, type WordRow, type ReviewSessionRow } from '@/lib/supabase/mappers';
 
 export default function SettingsPage() {
   const [showClearModal, setShowClearModal] = useState(false);
@@ -15,11 +16,18 @@ export default function SettingsPage() {
 
   async function handleExport() {
     try {
-      const words = await db.words.toArray();
-      const sessions = await db.reviewSessions.toArray();
-      const appState = await db.appState.toArray();
+      const supabase = createClient();
+      const [wordsResult, sessionsResult] = await Promise.all([
+        supabase.from('words').select('*'),
+        supabase.from('review_sessions').select('*'),
+      ]);
 
-      const data = { words, reviewSessions: sessions, appState, exportedAt: new Date().toISOString() };
+      const data = {
+        words: wordsResult.data ?? [],
+        reviewSessions: sessionsResult.data ?? [],
+        exportedAt: new Date().toISOString(),
+      };
+
       const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
 
@@ -47,22 +55,54 @@ export default function SettingsPage() {
         throw new Error('Invalid format');
       }
 
-      // Clear existing data first
-      await db.words.clear();
-      await db.reviewSessions.clear();
-      await db.appState.clear();
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Not authenticated');
 
-      // Import
+      // Clear existing data first
+      await supabase.from('words').delete().eq('user_id', user.id);
+      await supabase.from('review_sessions').delete().eq('user_id', user.id);
+
+      const now = new Date().toISOString();
+
+      // Import words
       if (data.words.length > 0) {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        await db.words.bulkAdd(data.words.map(({ id, ...rest }: Record<string, unknown>) => rest));
+        const rows = (data.words as WordRow[]).map((w) =>
+          wordToInsert(
+            {
+              word: w.word,
+              phonetic: w.phonetic ?? undefined,
+              meanings: w.meanings,
+              example: w.example ?? undefined,
+              notes: w.notes ?? undefined,
+              easeFactor: Number(w.ease_factor),
+              interval: w.interval,
+              repetitions: w.repetitions,
+              nextReviewDate: w.next_review_date,
+              srsStage: w.srs_stage,
+            },
+            user.id,
+            now
+          )
+        );
+        await supabase.from('words').insert(rows);
       }
+
+      // Import sessions
       if (data.reviewSessions?.length > 0) {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        await db.reviewSessions.bulkAdd(data.reviewSessions.map(({ id, ...rest }: Record<string, unknown>) => rest));
-      }
-      if (data.appState?.length > 0) {
-        await db.appState.bulkPut(data.appState);
+        const rows = (data.reviewSessions as ReviewSessionRow[]).map((s) =>
+          sessionToInsert(
+            {
+              date: s.date,
+              wordsReviewed: s.words_reviewed,
+              ratings: s.ratings,
+              duration: s.duration,
+              completedAt: s.completed_at,
+            },
+            user.id
+          )
+        );
+        await supabase.from('review_sessions').insert(rows);
       }
 
       toast(`Imported ${data.words.length} words`);
@@ -70,15 +110,19 @@ export default function SettingsPage() {
       toast('Import failed. Check file format.', 'error');
     }
 
-    // Reset input
     if (fileInputRef.current) fileInputRef.current.value = '';
   }
 
   async function handleClear() {
     try {
-      await db.words.clear();
-      await db.reviewSessions.clear();
-      await db.appState.clear();
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Not authenticated');
+
+      await supabase.from('words').delete().eq('user_id', user.id);
+      await supabase.from('review_sessions').delete().eq('user_id', user.id);
+      await supabase.from('app_state').delete().eq('user_id', user.id);
+
       setShowClearModal(false);
       toast('All data cleared');
     } catch {
@@ -126,7 +170,7 @@ export default function SettingsPage() {
             VocabFlow v1.0.0 — A vocabulary learning app with spaced repetition.
           </p>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-            All data is stored locally on your device.
+            Your data is securely stored in the cloud.
           </p>
         </Card>
       </div>

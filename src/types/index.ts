@@ -1,5 +1,5 @@
 export interface Word {
-  id?: number;
+  id?: string;
   word: string;
   phonetic?: string;
   meanings: Meaning[];
@@ -24,7 +24,7 @@ export type SrsStage = 'new' | 'learning' | 'reviewing' | 'mastered';
 export type Rating = 0 | 1 | 2 | 3; // Again, Hard, Good, Easy
 
 export interface ReviewSession {
-  id?: number;
+  id?: string;
   date: string;
   wordsReviewed: number;
   ratings: Record<string, Rating>;
