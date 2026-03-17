@@ -24,7 +24,7 @@ export function rowToWord(row: WordRow): Word {
     id: row.id,
     word: row.word,
     phonetic: row.phonetic ?? undefined,
-    meanings: row.meanings,
+    meanings: Array.isArray(row.meanings) ? row.meanings : [],
     example: row.example ?? undefined,
     notes: row.notes ?? undefined,
     easeFactor: Number(row.ease_factor),

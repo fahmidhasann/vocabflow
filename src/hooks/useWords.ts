@@ -33,7 +33,7 @@ export function useWords(filter?: { stage?: SrsStage; search?: string }) {
 }
 
 export function useWord(id: string | undefined) {
-  const [word, setWord] = useState<Word | undefined>(undefined);
+  const [word, setWord] = useState<Word | null | undefined>(undefined);
 
   useEffect(() => {
     if (!id) return;
@@ -44,7 +44,7 @@ export function useWord(id: string | undefined) {
       .eq('id', id)
       .single()
       .then(({ data }) => {
-        setWord(data ? rowToWord(data as WordRow) : undefined);
+        setWord(data ? rowToWord(data as WordRow) : null);
       });
   }, [id]);
 
