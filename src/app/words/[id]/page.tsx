@@ -1,6 +1,5 @@
 'use client';
 
-import { use } from 'react';
 import { PageShell } from '@/components/layout/PageShell';
 import { WordDetail } from '@/components/words/WordDetail';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
@@ -9,8 +8,8 @@ import { useWord } from '@/hooks/useWords';
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 
-export default function WordDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params);
+export default function WordDetailPage({ params }: { params: { id: string } }) {
+  const { id } = params;
   const word = useWord(id);
 
   if (word === undefined) {
