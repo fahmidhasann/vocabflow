@@ -12,6 +12,27 @@ npm run lint     # Run ESLint
 
 No test framework is configured.
 
+## Workflow
+
+### Planning
+- Enter plan mode for ANY non-trivial task (3+ steps or architectural decisions)
+- Write detailed specs upfront; if something goes sideways, STOP and re-plan
+- Use subagents to keep the main context window clean — one focused task per subagent
+
+### Task Management
+1. Write plan to `tasks/todo.md` with checkable items before starting
+2. Check in with user before implementing
+3. Mark items complete as you go
+4. Add a review section to `tasks/todo.md` when done
+5. Update `tasks/lessons.md` after any correction — capture the pattern to avoid repeating it
+
+### Core Principles
+- **Simplicity first** — minimal impact, only touch what's necessary
+- **No laziness** — find root causes, no temporary fixes, senior developer standards
+- **Verification before done** — never mark complete without proving it works; ask "Would a staff engineer approve this?"
+- **Demand elegance (balanced)** — pause on non-trivial changes and ask if there's a more elegant way; skip for simple obvious fixes
+- **Autonomous bug fixing** — when given a bug report, just fix it; point at logs/errors and resolve them
+
 ## Architecture
 
 VocabFlow is an offline-first vocabulary learning PWA. There is no backend — all data lives in the browser's IndexedDB via Dexie.
