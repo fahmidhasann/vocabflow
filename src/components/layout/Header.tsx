@@ -19,18 +19,20 @@ export function Header() {
   }
 
   return (
-    <header className="sticky top-0 z-40 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm border-b border-gray-200 dark:border-gray-800">
+    <header
+      className="sticky top-0 z-40 border-b border-ox-border bg-[rgba(245,240,232,0.96)] dark:bg-[rgba(28,23,16,0.96)] backdrop-blur-sm"
+    >
       <div className="max-w-2xl mx-auto px-4 h-14 flex items-center justify-between">
-        <Link href="/" className="text-xl font-bold text-indigo-600 dark:text-indigo-400">
+        <Link href="/" className="font-display font-bold italic text-ox-ink-deep" style={{ fontSize: '16px' }}>
           VocabFlow
         </Link>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1">
           <ThemeToggle />
           {user && (
             <div className="relative">
               <button
                 onClick={() => setMenuOpen((o) => !o)}
-                className="w-8 h-8 rounded-full overflow-hidden border-2 border-indigo-200 dark:border-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-8 h-8 rounded-full overflow-hidden border border-ox-border focus:outline-none focus:ring-2 focus:ring-ox-accent"
                 aria-label="User menu"
               >
                 {user.user_metadata?.avatar_url ? (
@@ -41,7 +43,7 @@ export function Header() {
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <div className="w-full h-full bg-indigo-500 flex items-center justify-center text-white text-xs font-bold">
+                  <div className="w-full h-full bg-ox-accent flex items-center justify-center text-white font-mono text-[10px] font-medium">
                     {(user.email ?? 'U')[0].toUpperCase()}
                   </div>
                 )}
@@ -53,18 +55,19 @@ export function Header() {
                     className="fixed inset-0 z-10"
                     onClick={() => setMenuOpen(false)}
                   />
-                  <div className="absolute right-0 mt-2 w-52 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 z-20 overflow-hidden">
-                    <div className="px-4 py-3 border-b border-gray-100 dark:border-gray-700">
-                      <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
+                  <div className="absolute right-0 mt-2 w-52 bg-ox-surface rounded-lg shadow-xl border border-ox-border z-20 overflow-hidden">
+                    <div className="px-4 py-3 border-b border-ox-border">
+                      <p className="font-serif text-[13px] text-ox-ink-deep truncate">
                         {user.user_metadata?.full_name ?? user.email}
                       </p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                      <p className="font-mono text-[10px] text-ox-muted truncate mt-0.5">
                         {user.email}
                       </p>
                     </div>
                     <button
                       onClick={handleSignOut}
-                      className="w-full text-left px-4 py-3 text-sm text-red-600 dark:text-red-400 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                      className="w-full text-left px-4 py-3 font-mono uppercase text-[#8b2020] hover:bg-ox-bg-dark transition-colors"
+                      style={{ fontSize: '10px', letterSpacing: '1px' }}
                     >
                       Sign out
                     </button>

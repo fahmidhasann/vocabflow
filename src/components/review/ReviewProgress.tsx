@@ -8,13 +8,17 @@ export function ReviewProgress({ current, total }: ReviewProgressProps) {
 
   return (
     <div className="w-full max-w-md mx-auto">
-      <div className="flex justify-between text-sm text-gray-500 dark:text-gray-400 mb-1">
-        <span>{current} / {total}</span>
-        <span>{percentage}%</span>
+      <div className="flex justify-between mb-1.5">
+        <span className="font-mono uppercase text-ox-muted" style={{ fontSize: '9px', letterSpacing: '2px' }}>
+          Progress
+        </span>
+        <span className="font-mono text-ox-muted" style={{ fontSize: '9px', letterSpacing: '1px' }}>
+          {current} / {total}
+        </span>
       </div>
-      <div className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+      <div className="w-full bg-ox-border rounded-sm overflow-hidden" style={{ height: '3px' }}>
         <div
-          className="h-full bg-indigo-600 dark:bg-indigo-400 rounded-full transition-all duration-300"
+          className="h-full bg-ox-accent rounded-sm transition-[width] duration-300 ease-linear"
           style={{ width: `${percentage}%` }}
         />
       </div>

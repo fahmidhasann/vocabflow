@@ -26,14 +26,15 @@ export function Modal({ open, onClose, title, children }: ModalProps) {
   return (
     <div
       ref={overlayRef}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      style={{ background: 'rgba(26,18,8,0.5)' }}
       onClick={(e) => { if (e.target === overlayRef.current) onClose(); }}
       role="dialog"
       aria-modal="true"
       aria-label={title}
     >
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-md w-full p-6">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">{title}</h2>
+      <div className="bg-ox-surface border border-ox-border rounded-[10px] shadow-xl max-w-md w-full p-6">
+        <h2 className="font-display text-[18px] font-semibold text-ox-ink-deep mb-4">{title}</h2>
         {children}
       </div>
     </div>

@@ -1,7 +1,6 @@
 'use client';
 
 import { createContext, useContext, useState, useCallback } from 'react';
-import { cn } from '@/lib/utils';
 
 type ToastType = 'success' | 'error' | 'info';
 
@@ -23,6 +22,12 @@ export function useToast() {
 
 let nextId = 0;
 
+const barColors: Record<ToastType, string> = {
+  success: '#6aab7a',
+  error: '#c97070',
+  info: '#5a90c0',
+};
+
 export function ToastProvider({ children }: { children: React.ReactNode }) {
   const [toasts, setToasts] = useState<Toast[]>([]);
 
@@ -41,14 +46,11 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
         {toasts.map((t) => (
           <div
             key={t.id}
-            className={cn(
-              'px-4 py-2 rounded-lg shadow-lg text-white text-sm font-medium animate-slide-up',
-              t.type === 'success' && 'bg-green-600',
-              t.type === 'error' && 'bg-red-600',
-              t.type === 'info' && 'bg-indigo-600'
-            )}
+            className="flex overflow-hidden rounded-sm border border-ox-border bg-ox-surface animate-slide-up"
+            style={{ boxShadow: '0 2px 8px rgba(26,18,8,0.10)' }}
           >
-            {t.message}
+            <div className="w-[3px] flex-shrink-0" style={{ background: barColors[t.type] }} />
+            <p className="px-4 py-2.5 font-serif text-[13px] text-ox-ink-deep">{t.message}</p>
           </div>
         ))}
       </div>

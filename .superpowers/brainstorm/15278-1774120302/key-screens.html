@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VocabFlow — Key Screens</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,300;1,8..60,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #e8e0d0;
+    font-family: 'Source Serif 4', Georgia, serif;
+    color: #1a1208;
+    padding: 32px 24px;
+  }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 24px;
+    font-weight: 700;
+    color: #1a1208;
+    border-bottom: 2px solid #1a1208;
+    padding-bottom: 12px;
+    margin-bottom: 32px;
+  }
+
+  .screens-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+
+  .screen-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #8b7355;
+    margin-bottom: 10px;
+  }
+
+  /* Phone frame */
+  .phone {
+    background: white;
+    border: 1.5px solid #d4c5a9;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 24px rgba(26,18,8,0.12);
+    font-family: 'Source Serif 4', serif;
+    color: #1a1208;
+  }
+
+  /* Shared header */
+  .app-header {
+    background: rgba(245,240,232,0.96);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid #d4c5a9;
+    padding: 12px 16px 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .app-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: #1a1208;
+    font-style: italic;
+  }
+  .app-header-right {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #8b7355;
+  }
+
+  /* Page body */
+  .page-body {
+    background: #f5f0e8;
+    padding: 16px;
+    min-height: 420px;
+  }
+
+  /* Bottom nav */
+  .bottom-nav {
+    background: rgba(245,240,232,0.97);
+    border-top: 1px solid #d4c5a9;
+    display: flex;
+    justify-content: space-around;
+    padding: 8px 0 6px;
+  }
+  .nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+  }
+  .nav-icon { font-size: 15px; }
+  .nav-text {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #8b7355;
+  }
+  .nav-item.active .nav-text { color: #8b6914; }
+
+  /* ---- DASHBOARD ---- */
+  .dash-hero {
+    background: white;
+    border: 1px solid #d4c5a9;
+    border-radius: 8px;
+    padding: 20px 16px;
+    text-align: center;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 8px rgba(26,18,8,0.05);
+  }
+  .dash-due-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #8b7355;
+    margin-bottom: 4px;
+  }
+  .dash-due-number {
+    font-family: 'Playfair Display', serif;
+    font-size: 52px;
+    font-weight: 700;
+    color: #8b6914;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .dash-due-sub {
+    font-family: 'Source Serif 4', serif;
+    font-size: 12px;
+    font-style: italic;
+    color: #8b7355;
+    margin-bottom: 14px;
+  }
+  .dash-btn {
+    background: #8b6914;
+    color: white;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 9px 24px;
+    border-radius: 3px;
+    border: none;
+    display: inline-block;
+  }
+
+  .dash-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .dash-stat {
+    background: white;
+    border: 1px solid #d4c5a9;
+    border-radius: 6px;
+    padding: 12px;
+    text-align: center;
+  }
+  .dash-stat-val {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 600;
+    color: #1a1208;
+  }
+  .dash-stat-lbl {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #8b7355;
+    margin-top: 2px;
+  }
+
+  .dash-streak {
+    background: white;
+    border: 1px solid #d4c5a9;
+    border-radius: 6px;
+    padding: 12px;
+  }
+  .dash-streak-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  .dash-streak-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #8b7355;
+  }
+  .dash-streak-val {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: #8b6914;
+  }
+  .streak-dots {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    gap: 3px;
+  }
+  .dot {
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: 2px;
+    background: #e8c870;
+  }
+  .dot.off { background: #e8e0d0; }
+
+  /* ---- REVIEW SCREEN ---- */
+  .review-progress-bar-wrap {
+    margin-bottom: 12px;
+  }
+  .review-progress-meta {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #8b7355;
+    margin-bottom: 5px;
+  }
+  .review-progress-track {
+    background: #d4c5a9;
+    border-radius: 2px;
+    height: 3px;
+  }
+  .review-progress-fill {
+    background: #8b6914;
+    height: 100%;
+    border-radius: 2px;
+    width: 42%;
+  }
+
+  .review-card {
+    background: white;
+    border: 1px solid #d4c5a9;
+    border-radius: 8px;
+    padding: 28px 20px;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(26,18,8,0.07);
+    margin-bottom: 12px;
+    min-height: 180px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  .review-word {
+    font-family: 'Playfair Display', serif;
+    font-size: 34px;
+    font-weight: 700;
+    color: #1a1208;
+    line-height: 1.2;
+    margin-bottom: 6px;
+  }
+  .review-phonetic {
+    font-family: 'Source Serif 4', serif;
+    font-style: italic;
+    font-weight: 300;
+    font-size: 13px;
+    color: #8b7355;
+    margin-bottom: 16px;
+  }
+  .review-hint {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #c4b898;
+    border-top: 1px solid #e8e0d0;
+    padding-top: 12px;
+    width: 100%;
+  }
+
+  .rating-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+  }
+  .rating-btn {
+    border: 1.5px solid;
+    background: transparent;
+    border-radius: 4px;
+    padding: 9px 6px;
+    text-align: center;
+  }
+  .rating-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+  .rating-interval {
+    font-family: 'Source Serif 4', serif;
+    font-size: 10px;
+    color: #8b7355;
+    font-style: italic;
+    margin-top: 1px;
+  }
+  .r0 { border-color: #c97070; color: #8b2020; }
+  .r1 { border-color: #c4914a; color: #7a5520; }
+  .r2 { border-color: #6aab7a; color: #2a6840; }
+  .r3 { border-color: #5a90c0; color: #1a4a70; }
+
+  /* ---- WORDS LIST ---- */
+  .words-search {
+    background: white;
+    border: 1px solid #d4c5a9;
+    border-radius: 6px;
+    padding: 9px 12px;
+    font-family: 'Source Serif 4', serif;
+    font-size: 13px;
+    color: #8b7355;
+    font-style: italic;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .words-filter {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 12px;
+    overflow: hidden;
+  }
+  .filter-chip {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 2px;
+    border: 1px solid #d4c5a9;
+    color: #8b7355;
+    white-space: nowrap;
+  }
+  .filter-chip.active {
+    background: #8b6914;
+    color: white;
+    border-color: #8b6914;
+  }
+
+  .word-row {
+    background: white;
+    border: 1px solid #d4c5a9;
+    border-radius: 6px;
+    padding: 12px 14px;
+    margin-bottom: 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+  .word-row-left {}
+  .word-row-word {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: #1a1208;
+    margin-bottom: 2px;
+  }
+  .word-row-def {
+    font-family: 'Source Serif 4', serif;
+    font-size: 11px;
+    color: #8b7355;
+    font-style: italic;
+    line-height: 1.4;
+    max-width: 140px;
+  }
+  .badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 2px;
+    border: 1px solid;
+    white-space: nowrap;
+  }
+  .badge-learning { background: #fff4e0; color: #8b6914; border-color: #e8c870; }
+  .badge-reviewing { background: #e8f0f8; color: #2a5a8a; border-color: #a0c0e0; }
+  .badge-mastered { background: #e8f4ec; color: #2a6840; border-color: #90c8a0; }
+  .badge-new { background: #e8e4dc; color: #6b6358; border-color: #c8bfaf; }
+
+</style>
+</head>
+<body>
+
+<h1>VocabFlow — Key Screens</h1>
+
+<div class="screens-grid">
+
+  <!-- DASHBOARD -->
+  <div>
+    <div class="screen-label">01 · Dashboard</div>
+    <div class="phone">
+      <div class="app-header">
+        <span class="app-logo">VocabFlow</span>
+        <span class="app-header-right">☾ ✦</span>
+      </div>
+      <div class="page-body">
+        <div class="dash-hero">
+          <div class="dash-due-label">Words due today</div>
+          <div class="dash-due-number">12</div>
+          <div class="dash-due-sub">Your daily study awaits</div>
+          <div class="dash-btn">Begin Review</div>
+        </div>
+        <div class="dash-stats">
+          <div class="dash-stat">
+            <div class="dash-stat-val">84</div>
+            <div class="dash-stat-lbl">Total Words</div>
+          </div>
+          <div class="dash-stat">
+            <div class="dash-stat-val" style="color:#2a6840;">31</div>
+            <div class="dash-stat-lbl">Mastered</div>
+          </div>
+          <div class="dash-stat">
+            <div class="dash-stat-val">248</div>
+            <div class="dash-stat-lbl">Reviews</div>
+          </div>
+          <div class="dash-stat">
+            <div class="dash-stat-val" style="color:#2a5a8a;">92%</div>
+            <div class="dash-stat-lbl">Retention</div>
+          </div>
+        </div>
+        <div class="dash-streak">
+          <div class="dash-streak-header">
+            <span class="dash-streak-title">Streak</span>
+            <span class="dash-streak-val">7 days</span>
+          </div>
+          <div class="streak-dots">
+            <div class="dot off"></div><div class="dot off"></div><div class="dot off"></div>
+            <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+            <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+            <div class="dot"></div>
+          </div>
+        </div>
+      </div>
+      <div class="bottom-nav">
+        <div class="nav-item active"><div class="nav-icon">⌂</div><div class="nav-text">Home</div></div>
+        <div class="nav-item"><div class="nav-icon">＋</div><div class="nav-text">Add</div></div>
+        <div class="nav-item"><div class="nav-icon">◈</div><div class="nav-text">Review</div></div>
+        <div class="nav-item"><div class="nav-icon">☰</div><div class="nav-text">Words</div></div>
+        <div class="nav-item"><div class="nav-icon">◎</div><div class="nav-text">Stats</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- REVIEW -->
+  <div>
+    <div class="screen-label">02 · Review Card</div>
+    <div class="phone">
+      <div class="app-header">
+        <span class="app-logo">VocabFlow</span>
+        <span class="app-header-right">7 / 12</span>
+      </div>
+      <div class="page-body">
+        <div class="review-progress-bar-wrap">
+          <div class="review-progress-meta">
+            <span>Progress</span>
+            <span>58%</span>
+          </div>
+          <div class="review-progress-track">
+            <div class="review-progress-fill"></div>
+          </div>
+        </div>
+
+        <div class="review-card">
+          <div class="review-word">ephemeral</div>
+          <div class="review-phonetic">/ɪˈfem.ər.əl/</div>
+          <div class="review-hint">Tap to reveal definition</div>
+        </div>
+
+        <div class="rating-grid">
+          <div class="rating-btn r0">
+            <div class="rating-label">Again</div>
+            <div class="rating-interval">Tomorrow</div>
+          </div>
+          <div class="rating-btn r1">
+            <div class="rating-label">Hard</div>
+            <div class="rating-interval">2 days</div>
+          </div>
+          <div class="rating-btn r2">
+            <div class="rating-label">Good</div>
+            <div class="rating-interval">4 days</div>
+          </div>
+          <div class="rating-btn r3">
+            <div class="rating-label">Easy</div>
+            <div class="rating-interval">8 days</div>
+          </div>
+        </div>
+      </div>
+      <div class="bottom-nav">
+        <div class="nav-item"><div class="nav-icon">⌂</div><div class="nav-text">Home</div></div>
+        <div class="nav-item"><div class="nav-icon">＋</div><div class="nav-text">Add</div></div>
+        <div class="nav-item active"><div class="nav-icon">◈</div><div class="nav-text">Review</div></div>
+        <div class="nav-item"><div class="nav-icon">☰</div><div class="nav-text">Words</div></div>
+        <div class="nav-item"><div class="nav-icon">◎</div><div class="nav-text">Stats</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WORDS LIST -->
+  <div>
+    <div class="screen-label">03 · Word Library</div>
+    <div class="phone">
+      <div class="app-header">
+        <span class="app-logo">VocabFlow</span>
+        <span class="app-header-right">84 words</span>
+      </div>
+      <div class="page-body">
+        <div class="words-search">
+          <span style="color:#c4b898; font-style:normal; font-family:'JetBrains Mono',monospace; font-size:10px;">⌕</span>
+          <span>Search your library…</span>
+        </div>
+        <div class="words-filter">
+          <div class="filter-chip active">All</div>
+          <div class="filter-chip">New</div>
+          <div class="filter-chip">Learning</div>
+          <div class="filter-chip">Reviewing</div>
+          <div class="filter-chip">Mastered</div>
+        </div>
+
+        <div class="word-row">
+          <div class="word-row-left">
+            <div class="word-row-word">ephemeral</div>
+            <div class="word-row-def">lasting for only a short time</div>
+          </div>
+          <span class="badge badge-reviewing">Reviewing</span>
+        </div>
+        <div class="word-row">
+          <div class="word-row-left">
+            <div class="word-row-word">sanguine</div>
+            <div class="word-row-def">optimistic, especially in a difficult situation</div>
+          </div>
+          <span class="badge badge-learning">Learning</span>
+        </div>
+        <div class="word-row">
+          <div class="word-row-left">
+            <div class="word-row-word">lucid</div>
+            <div class="word-row-def">expressed clearly; easy to understand</div>
+          </div>
+          <span class="badge badge-mastered">Mastered</span>
+        </div>
+        <div class="word-row">
+          <div class="word-row-left">
+            <div class="word-row-word">perfidious</div>
+            <div class="word-row-def">deceitful and untrustworthy</div>
+          </div>
+          <span class="badge badge-new">New</span>
+        </div>
+      </div>
+      <div class="bottom-nav">
+        <div class="nav-item"><div class="nav-icon">⌂</div><div class="nav-text">Home</div></div>
+        <div class="nav-item"><div class="nav-icon">＋</div><div class="nav-text">Add</div></div>
+        <div class="nav-item"><div class="nav-icon">◈</div><div class="nav-text">Review</div></div>
+        <div class="nav-item active"><div class="nav-icon">☰</div><div class="nav-text">Words</div></div>
+        <div class="nav-item"><div class="nav-icon">◎</div><div class="nav-text">Stats</div></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

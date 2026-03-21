@@ -54,23 +54,24 @@ export function WordForm({ initialData, onSave, saving, submitLabel = 'Save Word
     });
   }
 
-  const inputClass = 'w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm';
-  const labelClass = 'block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1';
+  const inputClass = 'w-full px-3 py-2 rounded-sm border border-ox-border bg-ox-bg font-serif text-[14px] text-ox-ink-deep placeholder:text-ox-muted placeholder:italic focus:outline-none focus:ring-2 focus:ring-ox-accent focus:border-transparent';
+  const labelClass = 'block font-mono uppercase text-ox-muted mb-1' as const;
+  const labelStyle = { fontSize: '10px', letterSpacing: '2px' } as const;
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label className={labelClass}>Word</label>
+        <label className={labelClass} style={labelStyle}>Word</label>
         <input type="text" value={word} onChange={(e) => setWord(e.target.value)} className={inputClass} required />
       </div>
 
       <div>
-        <label className={labelClass}>Phonetic</label>
+        <label className={labelClass} style={labelStyle}>Phonetic</label>
         <input type="text" value={phonetic} onChange={(e) => setPhonetic(e.target.value)} className={inputClass} placeholder="/fəˈnɛtɪk/" />
       </div>
 
       <div>
-        <label className={labelClass}>Meanings</label>
+        <label className={labelClass} style={labelStyle}>Meanings</label>
         <div className="space-y-3">
           {meanings.map((m, i) => (
             <div key={i} className="flex gap-2 items-start">
@@ -91,30 +92,35 @@ export function WordForm({ initialData, onSave, saving, submitLabel = 'Save Word
                 />
               </div>
               {meanings.length > 1 && (
-                <button type="button" onClick={() => removeMeaning(i)} className="text-red-500 hover:text-red-700 p-2 mt-1" aria-label="Remove meaning">
+                <button
+                  type="button"
+                  onClick={() => removeMeaning(i)}
+                  className="text-ox-muted hover:text-[#c97070] p-2 mt-1 transition-colors"
+                  aria-label="Remove meaning"
+                >
                   &times;
                 </button>
               )}
             </div>
           ))}
         </div>
-        <button type="button" onClick={addMeaning} className="mt-2 text-sm text-indigo-600 dark:text-indigo-400 hover:underline">
+        <Button type="button" variant="ghost" size="sm" onClick={addMeaning} className="mt-2">
           + Add meaning
-        </button>
+        </Button>
       </div>
 
       <div>
-        <label className={labelClass}>Example</label>
-        <input type="text" value={example} onChange={(e) => setExample(e.target.value)} className={inputClass} placeholder="Use the word in a sentence..." />
+        <label className={labelClass} style={labelStyle}>Example</label>
+        <input type="text" value={example} onChange={(e) => setExample(e.target.value)} className={inputClass} placeholder="Use the word in a sentence…" />
       </div>
 
       <div>
-        <label className={labelClass}>Notes</label>
-        <textarea value={notes} onChange={(e) => setNotes(e.target.value)} className={`${inputClass} resize-none`} rows={2} placeholder="Personal notes..." />
+        <label className={labelClass} style={labelStyle}>Notes</label>
+        <textarea value={notes} onChange={(e) => setNotes(e.target.value)} className={`${inputClass} resize-none`} rows={2} placeholder="Personal notes…" />
       </div>
 
       <Button type="submit" disabled={!word.trim() || meanings.length === 0 || saving} className="w-full">
-        {saving ? 'Saving...' : submitLabel}
+        {saving ? 'Saving…' : submitLabel}
       </Button>
     </form>
   );

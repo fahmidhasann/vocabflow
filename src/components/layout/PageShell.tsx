@@ -5,9 +5,11 @@ interface PageShellProps {
 
 export function PageShell({ title, children }: PageShellProps) {
   return (
-    <div className="max-w-2xl mx-auto px-4 py-6 pb-24">
+    <div className="max-w-2xl mx-auto px-4 py-6 pb-24 animate-slide-up">
       {title && (
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">{title}</h1>
+        <h1 className="font-display font-bold text-ox-ink-deep mb-6" style={{ fontSize: '24px' }}>
+          {title}
+        </h1>
       )}
       {children}
     </div>

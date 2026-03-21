@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Oxbridge Design System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=IM+Fell+English:ital@0;1&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,300;1,8..60,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #f5f0e8;
+    font-family: 'Source Serif 4', Georgia, serif;
+    color: #1a1208;
+    padding: 32px;
+    line-height: 1.6;
+  }
+  .page-title {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: #1a1208;
+    margin-bottom: 6px;
+    border-bottom: 2px solid #1a1208;
+    padding-bottom: 12px;
+    margin-bottom: 32px;
+  }
+  .section { margin-bottom: 40px; }
+  .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #8b7355;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #d4c5a9;
+  }
+
+  /* COLOR PALETTE */
+  .palette { display: flex; gap: 12px; flex-wrap: wrap; }
+  .swatch {
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid rgba(0,0,0,0.1);
+    width: 100px;
+  }
+  .swatch-color { height: 60px; }
+  .swatch-info {
+    background: white;
+    padding: 8px;
+  }
+  .swatch-name { font-size: 11px; font-weight: 600; color: #1a1208; font-family: 'JetBrains Mono', monospace; }
+  .swatch-hex { font-size: 10px; color: #8b7355; font-family: 'JetBrains Mono', monospace; }
+
+  /* TYPOGRAPHY */
+  .type-row {
+    background: white;
+    border: 1px solid #d4c5a9;
+    border-radius: 6px;
+    padding: 16px 20px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: baseline;
+    gap: 20px;
+  }
+  .type-meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: #8b7355;
+    min-width: 160px;
+    line-height: 1.4;
+  }
+
+  /* COMPONENTS */
+  .component-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .component-box {
+    background: white;
+    border: 1px solid #d4c5a9;
+    border-radius: 8px;
+    padding: 20px;
+  }
+  .component-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #8b7355;
+    margin-bottom: 14px;
+  }
+
+  /* Buttons */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: none;
+    cursor: pointer;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 10px 20px;
+    border-radius: 3px;
+    transition: all 0.15s;
+    margin: 4px;
+  }
+  .btn-primary { background: #8b6914; color: white; }
+  .btn-secondary { background: transparent; color: #1a1208; border: 1.5px solid #8b6914; }
+  .btn-ghost { background: transparent; color: #8b7355; border: 1.5px solid #d4c5a9; }
+  .btn-danger { background: transparent; color: #8b2020; border: 1.5px solid #c97070; }
+
+  /* Badges */
+  .badge {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 2px;
+    margin: 3px;
+  }
+  .badge-new { background: #e8e4dc; color: #6b6358; border: 1px solid #c8bfaf; }
+  .badge-learning { background: #fff4e0; color: #8b6914; border: 1px solid #e8c870; }
+  .badge-reviewing { background: #e8f0f8; color: #2a5a8a; border: 1px solid #a0c0e0; }
+  .badge-mastered { background: #e8f4ec; color: #2a6840; border: 1px solid #90c8a0; }
+
+  /* Card */
+  .vocab-card {
+    background: white;
+    border: 1px solid #d4c5a9;
+    border-radius: 6px;
+    padding: 16px;
+    box-shadow: 0 2px 8px rgba(26,18,8,0.06);
+  }
+  .vocab-card-word {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 600;
+    color: #1a1208;
+    margin-bottom: 2px;
+  }
+  .vocab-card-phonetic {
+    font-family: 'Source Serif 4', serif;
+    font-size: 12px;
+    color: #8b7355;
+    font-style: italic;
+    margin-bottom: 8px;
+  }
+  .vocab-card-def {
+    font-family: 'Source Serif 4', serif;
+    font-size: 13px;
+    color: #4a3728;
+    line-height: 1.6;
+    border-left: 2px solid #d4c5a9;
+    padding-left: 10px;
+    margin-bottom: 10px;
+  }
+
+  /* Review Card */
+  .review-card {
+    background: white;
+    border: 1px solid #d4c5a9;
+    border-radius: 8px;
+    padding: 32px;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(26,18,8,0.08);
+    min-height: 160px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  .review-word {
+    font-family: 'Playfair Display', serif;
+    font-size: 36px;
+    font-weight: 700;
+    color: #1a1208;
+    line-height: 1.2;
+    margin-bottom: 6px;
+  }
+  .review-phonetic {
+    font-family: 'Source Serif 4', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: #8b7355;
+  }
+
+  /* Rating Buttons */
+  .rating-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .rating-btn {
+    border: 1.5px solid;
+    background: transparent;
+    border-radius: 4px;
+    padding: 10px 8px;
+    cursor: pointer;
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .rating-btn-label { font-size: 11px; letter-spacing: 1px; text-transform: uppercase; font-weight: 600; }
+  .rating-btn-interval { font-size: 10px; color: #8b7355; margin-top: 2px; }
+  .r0 { border-color: #c97070; color: #8b2020; }
+  .r1 { border-color: #c4914a; color: #7a5520; }
+  .r2 { border-color: #6aab7a; color: #2a6840; }
+  .r3 { border-color: #5a90c0; color: #1a4a70; }
+
+  /* Nav */
+  .nav-bar {
+    background: rgba(245,240,232,0.95);
+    backdrop-filter: blur(8px);
+    border-top: 1px solid #d4c5a9;
+    padding: 10px 0 6px;
+    display: flex;
+    justify-content: space-around;
+    border-radius: 8px;
+  }
+  .nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    cursor: pointer;
+    padding: 4px 12px;
+  }
+  .nav-icon { font-size: 18px; }
+  .nav-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #8b7355;
+  }
+  .nav-item.active .nav-label { color: #8b6914; }
+  .nav-item.active .nav-icon { filter: sepia(1) saturate(2) hue-rotate(-10deg); }
+
+  .full-width { grid-column: 1 / -1; }
+</style>
+</head>
+<body>
+
+<div class="page-title">Oxbridge Design System — VocabFlow</div>
+
+<!-- COLOR PALETTE -->
+<div class="section">
+  <div class="section-label">Colour Palette</div>
+  <div class="palette">
+    <div class="swatch">
+      <div class="swatch-color" style="background:#f5f0e8;"></div>
+      <div class="swatch-info"><div class="swatch-name">parchment</div><div class="swatch-hex">#f5f0e8</div></div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#ede6d6;"></div>
+      <div class="swatch-info"><div class="swatch-name">parchment-dk</div><div class="swatch-hex">#ede6d6</div></div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#d4c5a9;"></div>
+      <div class="swatch-info"><div class="swatch-name">border</div><div class="swatch-hex">#d4c5a9</div></div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#8b7355;"></div>
+      <div class="swatch-info"><div class="swatch-name">muted</div><div class="swatch-hex">#8b7355</div></div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#4a3728;"></div>
+      <div class="swatch-info"><div class="swatch-name">ink</div><div class="swatch-hex">#4a3728</div></div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#1a1208;"></div>
+      <div class="swatch-info"><div class="swatch-name">ink-deep</div><div class="swatch-hex">#1a1208</div></div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#8b6914;"></div>
+      <div class="swatch-info"><div class="swatch-name">amber</div><div class="swatch-hex">#8b6914</div></div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#c4a84a;"></div>
+      <div class="swatch-info"><div class="swatch-name">amber-lt</div><div class="swatch-hex">#c4a84a</div></div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#f8f3e8;"></div>
+      <div class="swatch-info"><div class="swatch-name">paper</div><div class="swatch-hex">#f8f3e8</div></div>
+    </div>
+  </div>
+
+  <div style="margin-top: 16px;">
+    <div class="section-label" style="margin-top:16px;">Dark Mode Counterparts</div>
+    <div class="palette">
+      <div class="swatch">
+        <div class="swatch-color" style="background:#1c1710;"></div>
+        <div class="swatch-info"><div class="swatch-name">dk-bg</div><div class="swatch-hex">#1c1710</div></div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#28210f;"></div>
+        <div class="swatch-info"><div class="swatch-name">dk-surface</div><div class="swatch-hex">#28210f</div></div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#3a3020;"></div>
+        <div class="swatch-info"><div class="swatch-name">dk-border</div><div class="swatch-hex">#3a3020</div></div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#c4a84a;"></div>
+        <div class="swatch-info"><div class="swatch-name">dk-accent</div><div class="swatch-hex">#c4a84a</div></div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#e8dcc8;"></div>
+        <div class="swatch-info"><div class="swatch-name">dk-text</div><div class="swatch-hex">#e8dcc8</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TYPOGRAPHY -->
+<div class="section">
+  <div class="section-label">Typography</div>
+
+  <div class="type-row">
+    <div class="type-meta">Playfair Display 700<br>Page headings, word display</div>
+    <div style="font-family:'Playfair Display',serif; font-size:32px; font-weight:700; color:#1a1208; letter-spacing:-0.5px;">ephemeral</div>
+  </div>
+  <div class="type-row">
+    <div class="type-meta">Playfair Display 600 italic<br>Section titles, emphasis</div>
+    <div style="font-family:'Playfair Display',serif; font-size:22px; font-weight:600; font-style:italic; color:#1a1208;">Today's Review</div>
+  </div>
+  <div class="type-row">
+    <div class="type-meta">Source Serif 4 400<br>Body text, definitions</div>
+    <div style="font-family:'Source Serif 4',serif; font-size:15px; color:#4a3728; line-height:1.7;">lasting for only a short time; transitory. <em>The ephemeral beauty of cherry blossoms.</em></div>
+  </div>
+  <div class="type-row">
+    <div class="type-meta">Source Serif 4 300 italic<br>Phonetics, secondary text</div>
+    <div style="font-family:'Source Serif 4',serif; font-size:14px; font-weight:300; font-style:italic; color:#8b7355;">/ɪˈfem.ər.əl/ · adjective</div>
+  </div>
+  <div class="type-row">
+    <div class="type-meta">JetBrains Mono 400<br>Labels, badges, metadata</div>
+    <div style="font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:2px; text-transform:uppercase; color:#8b7355;">SRS Stage · Due Today · 7-day streak</div>
+  </div>
+  <div class="type-row">
+    <div class="type-meta">JetBrains Mono 500<br>Buttons, nav items</div>
+    <div style="display:flex; gap:8px; align-items:center; font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:1.5px; text-transform:uppercase;">
+      <span style="background:#8b6914;color:white;padding:9px 20px;border-radius:3px;">Begin Review</span>
+      <span style="border:1.5px solid #8b6914;color:#1a1208;padding:9px 20px;border-radius:3px;">Add Word</span>
+    </div>
+  </div>
+</div>
+
+<!-- COMPONENTS -->
+<div class="section">
+  <div class="section-label">Core Components</div>
+  <div class="component-grid">
+
+    <!-- Buttons -->
+    <div class="component-box">
+      <div class="component-title">Buttons</div>
+      <div>
+        <button class="btn btn-primary">Begin Review</button>
+        <button class="btn btn-secondary">Add Word</button>
+        <button class="btn btn-ghost">Cancel</button>
+        <button class="btn btn-danger">Delete</button>
+      </div>
+    </div>
+
+    <!-- Badges -->
+    <div class="component-box">
+      <div class="component-title">SRS Stage Badges</div>
+      <div style="margin-top:4px;">
+        <span class="badge badge-new">New</span>
+        <span class="badge badge-learning">Learning</span>
+        <span class="badge badge-reviewing">Reviewing</span>
+        <span class="badge badge-mastered">Mastered</span>
+      </div>
+    </div>
+
+    <!-- Word Card -->
+    <div class="component-box">
+      <div class="component-title">Word Card</div>
+      <div class="vocab-card">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+          <div>
+            <div class="vocab-card-word">ephemeral</div>
+            <div class="vocab-card-phonetic">/ɪˈfem.ər.əl/ · adj.</div>
+          </div>
+          <span class="badge badge-reviewing">Reviewing</span>
+        </div>
+        <div class="vocab-card-def">lasting for only a short time; transitory.</div>
+      </div>
+    </div>
+
+    <!-- Review Card Front -->
+    <div class="component-box">
+      <div class="component-title">Review Card (Front)</div>
+      <div class="review-card">
+        <div class="review-word">ephemeral</div>
+        <div class="review-phonetic">/ɪˈfem.ər.əl/</div>
+        <div style="margin-top:16px; font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:2px; text-transform:uppercase; color:#8b7355;">tap to reveal</div>
+      </div>
+    </div>
+
+    <!-- Rating Buttons -->
+    <div class="component-box">
+      <div class="component-title">Rating Buttons</div>
+      <div class="rating-grid">
+        <div class="rating-btn r0">
+          <div class="rating-btn-label">Again</div>
+          <div class="rating-btn-interval">Tomorrow</div>
+        </div>
+        <div class="rating-btn r1">
+          <div class="rating-btn-label">Hard</div>
+          <div class="rating-btn-interval">2 days</div>
+        </div>
+        <div class="rating-btn r2">
+          <div class="rating-btn-label">Good</div>
+          <div class="rating-btn-interval">4 days</div>
+        </div>
+        <div class="rating-btn r3">
+          <div class="rating-btn-label">Easy</div>
+          <div class="rating-btn-interval">8 days</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Nav -->
+    <div class="component-box">
+      <div class="component-title">Bottom Navigation</div>
+      <div class="nav-bar">
+        <div class="nav-item active">
+          <div class="nav-icon">⌂</div>
+          <div class="nav-label">Home</div>
+        </div>
+        <div class="nav-item">
+          <div class="nav-icon">＋</div>
+          <div class="nav-label">Add</div>
+        </div>
+        <div class="nav-item">
+          <div class="nav-icon">◈</div>
+          <div class="nav-label">Review</div>
+        </div>
+        <div class="nav-item">
+          <div class="nav-icon">☰</div>
+          <div class="nav-label">Words</div>
+        </div>
+        <div class="nav-item">
+          <div class="nav-icon">◎</div>
+          <div class="nav-label">Stats</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Progress Bar -->
+    <div class="component-box full-width">
+      <div class="component-title">Review Progress</div>
+      <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:#8b7355;">Progress</span>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#8b7355;">7 / 12</span>
+      </div>
+      <div style="background:#d4c5a9; border-radius:2px; height:4px; overflow:hidden;">
+        <div style="background:#8b6914; height:100%; width:58%; border-radius:2px; transition:width 0.3s;"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div style="margin-top: 32px; border-top: 2px solid #1a1208; padding-top: 20px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #8b7355; letter-spacing: 1px;">
+  VOCABFLOW · OXBRIDGE DESIGN SYSTEM · 2026
+</div>
+
+</body>
+</html>

@@ -17,6 +17,8 @@ interface WordDetailProps {
   word: Word;
 }
 
+const labelStyle = { fontSize: '10px', letterSpacing: '2px' } as const;
+
 export function WordDetail({ word }: WordDetailProps) {
   const [editing, setEditing] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
@@ -41,7 +43,7 @@ export function WordDetail({ word }: WordDetailProps) {
     return (
       <div>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Edit Word</h2>
+          <h2 className="font-display font-semibold text-ox-ink-deep" style={{ fontSize: '18px' }}>Edit Word</h2>
           <Button variant="ghost" size="sm" onClick={() => setEditing(false)}>Cancel</Button>
         </div>
         <WordForm
@@ -57,23 +59,29 @@ export function WordDetail({ word }: WordDetailProps) {
     <div className="space-y-4">
       <div className="flex items-start justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{word.word}</h2>
+          <h2 className="font-display font-bold text-ox-ink-deep" style={{ fontSize: '40px', letterSpacing: '-0.5px' }}>
+            {word.word}
+          </h2>
           {word.phonetic && (
-            <p className="text-gray-500 dark:text-gray-400">{word.phonetic}</p>
+            <p className="font-serif font-light italic text-ox-muted" style={{ fontSize: '13px' }}>
+              {word.phonetic}
+            </p>
           )}
         </div>
         <Badge stage={word.srsStage} />
       </div>
 
       <Card>
-        <h3 className="font-medium text-gray-900 dark:text-gray-100 mb-2">Meanings</h3>
-        <div className="space-y-2">
+        <h3 className="font-mono uppercase text-ox-muted mb-3" style={labelStyle}>Meanings</h3>
+        <div className="space-y-3">
           {word.meanings.map((m, i) => (
             <div key={i}>
               {m.partOfSpeech && (
-                <span className="text-sm font-medium text-indigo-600 dark:text-indigo-400 italic">{m.partOfSpeech}</span>
+                <p className="font-mono uppercase text-ox-muted mb-0.5" style={{ fontSize: '9px', letterSpacing: '2px' }}>
+                  {m.partOfSpeech}
+                </p>
               )}
-              <p className="text-gray-700 dark:text-gray-300 text-sm">{m.definition}</p>
+              <p className="font-serif text-ox-ink" style={{ fontSize: '14px', lineHeight: '1.7' }}>{m.definition}</p>
             </div>
           ))}
         </div>
@@ -81,29 +89,29 @@ export function WordDetail({ word }: WordDetailProps) {
 
       {word.example && (
         <Card>
-          <h3 className="font-medium text-gray-900 dark:text-gray-100 mb-1">Example</h3>
-          <p className="text-sm text-gray-600 dark:text-gray-400 italic">&ldquo;{word.example}&rdquo;</p>
+          <h3 className="font-mono uppercase text-ox-muted mb-2" style={labelStyle}>Example</h3>
+          <p className="font-serif italic text-ox-muted" style={{ fontSize: '13px' }}>&ldquo;{word.example}&rdquo;</p>
         </Card>
       )}
 
       {word.notes && (
         <Card>
-          <h3 className="font-medium text-gray-900 dark:text-gray-100 mb-1">Notes</h3>
-          <p className="text-sm text-gray-600 dark:text-gray-400">{word.notes}</p>
+          <h3 className="font-mono uppercase text-ox-muted mb-2" style={labelStyle}>Notes</h3>
+          <p className="font-serif text-ox-ink" style={{ fontSize: '13px' }}>{word.notes}</p>
         </Card>
       )}
 
       <Card>
-        <h3 className="font-medium text-gray-900 dark:text-gray-100 mb-2">SRS Info</h3>
-        <div className="grid grid-cols-2 gap-2 text-sm">
-          <div className="text-gray-500 dark:text-gray-400">Interval</div>
-          <div className="text-gray-900 dark:text-gray-100">{word.interval === 0 ? 'New' : formatInterval(word.interval)}</div>
-          <div className="text-gray-500 dark:text-gray-400">Ease Factor</div>
-          <div className="text-gray-900 dark:text-gray-100">{word.easeFactor.toFixed(2)}</div>
-          <div className="text-gray-500 dark:text-gray-400">Next Review</div>
-          <div className="text-gray-900 dark:text-gray-100">{formatDate(word.nextReviewDate)}</div>
-          <div className="text-gray-500 dark:text-gray-400">Added</div>
-          <div className="text-gray-900 dark:text-gray-100">{formatDate(word.createdAt)}</div>
+        <h3 className="font-mono uppercase text-ox-muted mb-3" style={labelStyle}>SRS Info</h3>
+        <div className="grid grid-cols-2 gap-2">
+          <div className="font-mono uppercase text-ox-muted" style={{ fontSize: '9px', letterSpacing: '1px' }}>Interval</div>
+          <div className="font-serif text-ox-ink" style={{ fontSize: '13px' }}>{word.interval === 0 ? 'New' : formatInterval(word.interval)}</div>
+          <div className="font-mono uppercase text-ox-muted" style={{ fontSize: '9px', letterSpacing: '1px' }}>Ease Factor</div>
+          <div className="font-serif text-ox-ink" style={{ fontSize: '13px' }}>{word.easeFactor.toFixed(2)}</div>
+          <div className="font-mono uppercase text-ox-muted" style={{ fontSize: '9px', letterSpacing: '1px' }}>Next Review</div>
+          <div className="font-serif text-ox-ink" style={{ fontSize: '13px' }}>{formatDate(word.nextReviewDate)}</div>
+          <div className="font-mono uppercase text-ox-muted" style={{ fontSize: '9px', letterSpacing: '1px' }}>Added</div>
+          <div className="font-serif text-ox-ink" style={{ fontSize: '13px' }}>{formatDate(word.createdAt)}</div>
         </div>
       </Card>
 
@@ -113,7 +121,7 @@ export function WordDetail({ word }: WordDetailProps) {
       </div>
 
       <Modal open={showDelete} onClose={() => setShowDelete(false)} title="Delete Word">
-        <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+        <p className="font-serif text-ox-muted mb-4" style={{ fontSize: '13px' }}>
           Are you sure you want to delete &ldquo;{word.word}&rdquo;? This cannot be undone.
         </p>
         <div className="flex gap-2 justify-end">

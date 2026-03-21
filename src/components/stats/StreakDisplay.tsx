@@ -1,14 +1,11 @@
 'use client';
 
-import { cn } from '@/lib/utils';
-
 interface StreakDisplayProps {
   currentStreak: number;
   reviewDates: Set<string>;
 }
 
 export function StreakDisplay({ currentStreak, reviewDates }: StreakDisplayProps) {
-  // Generate last 30 days
   const days: { date: string; hasReview: boolean }[] = [];
   for (let i = 29; i >= 0; i--) {
     const d = new Date();
@@ -19,25 +16,24 @@ export function StreakDisplay({ currentStreak, reviewDates }: StreakDisplayProps
 
   return (
     <div>
-      <div className="flex items-center gap-2 mb-3">
-        <span className="text-2xl font-bold text-orange-500">{currentStreak}</span>
-        <span className="text-sm text-gray-500 dark:text-gray-400">day streak</span>
+      <div className="flex items-baseline gap-2 mb-3">
+        <span className="font-display font-bold text-ox-accent" style={{ fontSize: '22px' }}>{currentStreak}</span>
+        <span className="font-mono uppercase text-ox-muted" style={{ fontSize: '9px', letterSpacing: '2px' }}>day streak</span>
       </div>
       <div className="grid grid-cols-10 gap-1">
         {days.map((day) => (
           <div
             key={day.date}
-            className={cn(
-              'w-full aspect-square rounded-sm',
-              day.hasReview
-                ? 'bg-green-500 dark:bg-green-400'
-                : 'bg-gray-200 dark:bg-gray-700'
-            )}
+            className="w-full aspect-square rounded-sm"
+            style={{
+              background: day.hasReview ? 'var(--color-accent-light)' : 'var(--color-bg-dark)',
+              borderRadius: '2px',
+            }}
             title={day.date}
           />
         ))}
       </div>
-      <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">Last 30 days</p>
+      <p className="font-mono uppercase text-ox-muted mt-1" style={{ fontSize: '8px', letterSpacing: '1px' }}>Last 30 days</p>
     </div>
   );
 }

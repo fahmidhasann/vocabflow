@@ -9,11 +9,11 @@ interface RatingButtonsProps {
   onRate: (rating: Rating) => void;
 }
 
-const ratingStyles: Record<Rating, string> = {
-  0: 'bg-red-500 hover:bg-red-600 text-white',
-  1: 'bg-orange-500 hover:bg-orange-600 text-white',
-  2: 'bg-green-500 hover:bg-green-600 text-white',
-  3: 'bg-blue-500 hover:bg-blue-600 text-white',
+const ratingColors: Record<Rating, { border: string; text: string }> = {
+  0: { border: '#c97070', text: '#8b2020' },
+  1: { border: '#c4914a', text: '#7a5520' },
+  2: { border: '#6aab7a', text: '#2a6840' },
+  3: { border: '#5a90c0', text: '#1a4a70' },
 };
 
 export function RatingButtons({ word, onRate }: RatingButtonsProps) {
@@ -21,16 +21,34 @@ export function RatingButtons({ word, onRate }: RatingButtonsProps) {
 
   return (
     <div className="grid grid-cols-4 gap-2 w-full max-w-md mx-auto">
-      {([0, 1, 2, 3] as Rating[]).map((rating) => (
-        <button
-          key={rating}
-          onClick={() => onRate(rating)}
-          className={`flex flex-col items-center py-3 px-2 rounded-xl font-medium transition-colors ${ratingStyles[rating]}`}
-        >
-          <span className="text-sm font-semibold">{RATING_LABELS[rating]}</span>
-          <span className="text-xs opacity-80 mt-0.5">{formatInterval(intervals[rating])}</span>
-        </button>
-      ))}
+      {([0, 1, 2, 3] as Rating[]).map((rating) => {
+        const colors = ratingColors[rating];
+        return (
+          <button
+            key={rating}
+            onClick={() => onRate(rating)}
+            className="flex flex-col items-center py-3 px-2 rounded-[4px] transition-colors"
+            style={{
+              border: `1.5px solid ${colors.border}`,
+              color: colors.text,
+              background: 'transparent',
+            }}
+            onMouseEnter={(e) => {
+              (e.currentTarget as HTMLButtonElement).style.background = `${colors.border}14`;
+            }}
+            onMouseLeave={(e) => {
+              (e.currentTarget as HTMLButtonElement).style.background = 'transparent';
+            }}
+          >
+            <span className="font-mono uppercase" style={{ fontSize: '10px', letterSpacing: '1px' }}>
+              {RATING_LABELS[rating]}
+            </span>
+            <span className="font-serif italic text-ox-muted mt-0.5" style={{ fontSize: '10px' }}>
+              {formatInterval(intervals[rating])}
+            </span>
+          </button>
+        );
+      })}
     </div>
   );
 }

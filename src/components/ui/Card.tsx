@@ -2,17 +2,18 @@ import { cn } from '@/lib/utils';
 import { HTMLAttributes } from 'react';
 
 interface CardProps extends HTMLAttributes<HTMLDivElement> {
-  padding?: boolean;
+  noPadding?: boolean;
 }
 
-export function Card({ className, padding = true, children, ...props }: CardProps) {
+export function Card({ className, noPadding = false, children, ...props }: CardProps) {
   return (
     <div
       className={cn(
-        'bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm',
-        padding && 'p-4',
+        'bg-ox-surface rounded-lg border border-ox-border',
+        !noPadding && 'p-4',
         className
       )}
+      style={{ boxShadow: '0 2px 8px rgba(26,18,8,0.06)' }}
       {...props}
     >
       {children}

@@ -2,21 +2,21 @@ import { cn } from '@/lib/utils';
 import { ButtonHTMLAttributes, forwardRef } from 'react';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'danger' | 'ghost';
+  variant?: 'primary' | 'secondary' | 'ghost' | 'danger';
   size?: 'sm' | 'md' | 'lg';
 }
 
 const variants = {
-  primary: 'bg-indigo-600 text-white hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600',
-  secondary: 'bg-gray-200 text-gray-800 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600',
-  danger: 'bg-red-600 text-white hover:bg-red-700',
-  ghost: 'text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800',
+  primary: 'bg-ox-accent text-white border border-ox-accent hover:opacity-90',
+  secondary: 'bg-transparent text-ox-ink-deep border border-ox-accent hover:bg-ox-bg-dark',
+  ghost: 'bg-transparent text-ox-muted border border-ox-border hover:bg-ox-bg-dark',
+  danger: 'bg-transparent text-[#8b2020] border border-[#c97070] hover:bg-[#c97070]/10',
 };
 
 const sizes = {
-  sm: 'px-3 py-1.5 text-sm',
-  md: 'px-4 py-2 text-sm',
-  lg: 'px-6 py-3 text-base',
+  sm: 'px-3.5 py-2',
+  md: 'px-5 py-2.5',
+  lg: 'px-7 py-3',
 };
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
@@ -25,7 +25,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       <button
         ref={ref}
         className={cn(
-          'inline-flex items-center justify-center rounded-lg font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900',
+          'inline-flex items-center justify-center rounded-sm font-mono text-[10px] uppercase tracking-[1.5px] transition-[background,border-color,opacity] duration-150 focus:outline-none focus:ring-2 focus:ring-ox-accent focus:ring-offset-2',
           variants[variant],
           sizes[size],
           disabled && 'opacity-50 cursor-not-allowed',

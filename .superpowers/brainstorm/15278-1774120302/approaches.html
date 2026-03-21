@@ -1,0 +1,44 @@
+<h2>Three Implementation Approaches</h2>
+<p class="subtitle">All use the Oxbridge aesthetic. The difference is in how deeply we rework the layout and component architecture.</p>
+
+<div class="options">
+
+  <div class="option" data-choice="token-swap" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Token Swap</h3>
+      <p>Replace CSS variables, font stack, and color palette globally. All existing components inherit the new look with minimal structural changes. Quickest path, lower risk.</p>
+      <div class="pros-cons" style="margin-top: 10px;">
+        <div class="pros"><h4>Pros</h4><ul><li>Low risk — existing layouts unchanged</li><li>Fast to implement</li><li>Easy to revert</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>Misses opportunities for layout improvements</li><li>Card shapes and spacing stay the same</li><li>Typography hierarchy limited to what's already there</li></ul></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="component-refresh" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Component Refresh <span style="font-size:11px; background:#8b6914; color:white; padding:2px 8px; border-radius:2px; letter-spacing:1px; vertical-align:middle; margin-left:6px;">RECOMMENDED</span></h3>
+      <p>New design tokens <em>plus</em> redesigned core components: cards, buttons, badges, the review card flip, and the bottom nav. Pages stay structurally the same but components get Oxbridge-native markup and spacing.</p>
+      <div class="pros-cons" style="margin-top: 10px;">
+        <div class="pros"><h4>Pros</h4><ul><li>Components built for the aesthetic, not retrofitted</li><li>Typography hierarchy properly expressed</li><li>Serif headings, parchment textures, amber accents land correctly</li><li>Manageable scope — no routing or data changes</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>More files touched than Option A</li><li>Review card 3D flip needs rethinking for the new style</li></ul></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="full-overhaul" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>Full Overhaul</h3>
+      <p>Redesign tokens, components, <em>and</em> page-level layouts. Introduces new layout patterns: e.g. a split-pane word detail view, a magazine-grid word browser, a richer stats dashboard. Maximum creative expression.</p>
+      <div class="pros-cons" style="margin-top: 10px;">
+        <div class="pros"><h4>Pros</h4><ul><li>Most distinctive and memorable result</li><li>Every page feels purpose-built</li><li>Room for editorial layout moments</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>Largest scope — more things to coordinate</li><li>Higher chance of layout regressions on mobile</li><li>Takes longer to implement correctly</li></ul></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<p class="subtitle" style="margin-top: 16px; text-align: center;">Click to select, then confirm in the terminal.</p>

@@ -10,22 +10,34 @@ export function WordCard({ word }: WordCardProps) {
   return (
     <Link
       href={`/words/${word.id}`}
-      className="block p-4 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-indigo-300 dark:hover:border-indigo-600 transition-colors"
+      className="block p-4 bg-ox-surface rounded-lg border border-ox-border hover:border-ox-accent transition-[border-color] duration-150"
+      style={{ boxShadow: '0 2px 8px rgba(26,18,8,0.06)' }}
     >
-      <div className="flex items-start justify-between gap-2">
+      <div className="flex items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-2">
-            <h3 className="font-semibold text-gray-900 dark:text-gray-100 truncate">{word.word}</h3>
+          <div className="flex items-baseline gap-2">
+            <h3 className="font-display font-semibold text-ox-ink-deep" style={{ fontSize: '18px' }}>
+              {word.word}
+            </h3>
             {word.phonetic && (
-              <span className="text-sm text-gray-500 dark:text-gray-400 flex-shrink-0">{word.phonetic}</span>
+              <span className="font-serif font-light italic text-ox-muted flex-shrink-0" style={{ fontSize: '11px' }}>
+                {word.phonetic}
+              </span>
             )}
           </div>
-          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1 truncate">
-            {word.meanings[0]?.partOfSpeech && (
-              <span className="italic">{word.meanings[0].partOfSpeech} </span>
-            )}
-            {word.meanings[0]?.definition}
-          </p>
+          {word.meanings[0]?.definition && (
+            <p
+              className="font-serif italic text-ox-muted mt-1 border-l-2 border-ox-border pl-2.5 truncate"
+              style={{ fontSize: '11px', lineHeight: '1.4' }}
+            >
+              {word.meanings[0].partOfSpeech && (
+                <span className="not-italic font-mono uppercase mr-1" style={{ fontSize: '9px', letterSpacing: '1px' }}>
+                  {word.meanings[0].partOfSpeech}
+                </span>
+              )}
+              {word.meanings[0].definition}
+            </p>
+          )}
         </div>
         <Badge stage={word.srsStage} />
       </div>

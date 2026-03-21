@@ -5,13 +5,14 @@ interface EmptyStateProps {
   children?: React.ReactNode;
 }
 
-export function EmptyState({ icon = '📭', title, description, children }: EmptyStateProps) {
+export function EmptyState({ title, description, children }: EmptyStateProps) {
+  // icon prop is intentionally unused — replaced by typographic ornament per Oxbridge spec
   return (
     <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
-      <span className="text-4xl mb-4">{icon}</span>
-      <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">{title}</h3>
+      <span className="text-ox-muted text-3xl mb-4">✦</span>
+      <h3 className="font-display text-[20px] font-semibold italic text-ox-ink-deep">{title}</h3>
       {description && (
-        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">{description}</p>
+        <p className="mt-1 font-serif text-[14px] text-ox-muted">{description}</p>
       )}
       {children && <div className="mt-4">{children}</div>}
     </div>

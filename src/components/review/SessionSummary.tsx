@@ -14,6 +14,13 @@ interface SessionSummaryProps {
   onRestart: () => void;
 }
 
+const ratingBarColors: Record<number, string> = {
+  0: '#c97070',
+  1: '#c4914a',
+  2: '#6aab7a',
+  3: '#5a90c0',
+};
+
 export function SessionSummary({ wordsReviewed, ratings, duration, onRestart }: SessionSummaryProps) {
   const ratingCounts = Object.values(ratings).reduce(
     (acc, r) => {
@@ -26,39 +33,42 @@ export function SessionSummary({ wordsReviewed, ratings, duration, onRestart }: 
   return (
     <div className="text-center space-y-6 max-w-md mx-auto">
       <div>
-        <p className="text-4xl mb-2">🎉</p>
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Session Complete!</h2>
+        <h2 className="font-display font-bold text-ox-ink-deep" style={{ fontSize: '24px' }}>
+          Session Complete
+        </h2>
       </div>
 
       <Card>
         <div className="grid grid-cols-2 gap-4 text-center">
           <div>
-            <p className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">{wordsReviewed}</p>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Words Reviewed</p>
+            <p className="font-display font-semibold text-ox-accent" style={{ fontSize: '22px' }}>{wordsReviewed}</p>
+            <p className="font-mono uppercase text-ox-muted mt-0.5" style={{ fontSize: '9px', letterSpacing: '2px' }}>Words Reviewed</p>
           </div>
           <div>
-            <p className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">{formatDuration(duration)}</p>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Duration</p>
+            <p className="font-display font-semibold text-ox-accent" style={{ fontSize: '22px' }}>{formatDuration(duration)}</p>
+            <p className="font-mono uppercase text-ox-muted mt-0.5" style={{ fontSize: '9px', letterSpacing: '2px' }}>Duration</p>
           </div>
         </div>
       </Card>
 
       <Card>
-        <h3 className="font-medium text-gray-900 dark:text-gray-100 mb-3">Rating Breakdown</h3>
-        <div className="space-y-2">
+        <h3 className="font-mono uppercase text-ox-muted mb-3" style={{ fontSize: '9px', letterSpacing: '2px' }}>Rating Breakdown</h3>
+        <div className="space-y-2.5">
           {([0, 1, 2, 3] as Rating[]).map((rating) => {
             const count = ratingCounts[rating] || 0;
             const pct = wordsReviewed > 0 ? (count / wordsReviewed) * 100 : 0;
             return (
-              <div key={rating} className="flex items-center gap-2 text-sm">
-                <span className="w-12 text-gray-600 dark:text-gray-400">{RATING_LABELS[rating]}</span>
-                <div className="flex-1 h-4 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+              <div key={rating} className="flex items-center gap-2">
+                <span className="font-mono uppercase text-ox-muted w-12" style={{ fontSize: '9px', letterSpacing: '1px' }}>
+                  {RATING_LABELS[rating]}
+                </span>
+                <div className="flex-1 bg-ox-border rounded-sm overflow-hidden" style={{ height: '4px' }}>
                   <div
-                    className={`h-full rounded-full ${rating === 0 ? 'bg-red-500' : rating === 1 ? 'bg-orange-500' : rating === 2 ? 'bg-green-500' : 'bg-blue-500'}`}
-                    style={{ width: `${pct}%` }}
+                    className="h-full rounded-sm transition-all duration-500"
+                    style={{ width: `${pct}%`, background: ratingBarColors[rating] }}
                   />
                 </div>
-                <span className="w-6 text-right text-gray-500 dark:text-gray-400">{count}</span>
+                <span className="font-mono text-ox-muted w-5 text-right" style={{ fontSize: '9px' }}>{count}</span>
               </div>
             );
           })}

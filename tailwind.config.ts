@@ -10,8 +10,21 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
+        'ox-bg':           'var(--color-bg)',
+        'ox-bg-dark':      'var(--color-bg-dark)',
+        'ox-surface':      'var(--color-surface)',
+        'ox-border':       'var(--color-border)',
+        'ox-muted':        'var(--color-muted)',
+        'ox-ink':          'var(--color-ink)',
+        'ox-ink-deep':     'var(--color-ink-deep)',
+        'ox-accent':       'var(--color-accent)',
+        'ox-accent-light': 'var(--color-accent-light)',
+        'ox-paper':        'var(--color-paper)',
+      },
+      fontFamily: {
+        display: ['var(--font-playfair)', 'Georgia', 'serif'],
+        serif:   ['var(--font-source-serif)', 'Georgia', 'serif'],
+        mono:    ['var(--font-jetbrains)', 'monospace'],
       },
     },
   },
