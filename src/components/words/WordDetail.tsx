@@ -9,6 +9,8 @@ import { Modal } from '@/components/ui/Modal';
 import { WordForm } from './WordForm';
 import { updateWord, deleteWord } from '@/hooks/useWords';
 import { useToast } from '@/components/ui/Toast';
+import { useUsageMap } from '@/hooks/useUsageMap';
+import { UsageMapTree } from './UsageMapTree';
 import { formatDate } from '@/lib/utils';
 import { formatInterval } from '@/lib/srs';
 import type { Word } from '@/types';
@@ -24,6 +26,7 @@ export function WordDetail({ word }: WordDetailProps) {
   const [showDelete, setShowDelete] = useState(false);
   const router = useRouter();
   const { toast } = useToast();
+  const usageMap = useUsageMap();
 
   async function handleSave(data: Parameters<typeof updateWord>[1]) {
     if (!word.id) return;
@@ -100,6 +103,36 @@ export function WordDetail({ word }: WordDetailProps) {
           <p className="font-serif text-ox-ink" style={{ fontSize: '13px' }}>{word.notes}</p>
         </Card>
       )}
+
+      <Card>
+        {usageMap.status === 'idle' && (
+          <button
+            onClick={() => usageMap.generate(word.word)}
+            className="font-mono uppercase text-ox-accent hover:text-ox-ink transition-colors"
+            style={labelStyle}
+          >
+            Generate Usage Map ↓
+          </button>
+        )}
+        {usageMap.status === 'loading' && (
+          <p className="font-mono uppercase text-ox-muted" style={labelStyle}>Generating…</p>
+        )}
+        {usageMap.status === 'error' && (
+          <div>
+            <p className="font-mono uppercase text-red-500 mb-1" style={labelStyle}>Failed to generate</p>
+            <button
+              onClick={() => usageMap.generate(word.word)}
+              className="font-mono uppercase text-ox-accent hover:text-ox-ink transition-colors"
+              style={labelStyle}
+            >
+              Try again
+            </button>
+          </div>
+        )}
+        {usageMap.status === 'success' && (
+          <UsageMapTree data={usageMap.data} />
+        )}
+      </Card>
 
       <Card>
         <h3 className="font-mono uppercase text-ox-muted mb-3" style={labelStyle}>SRS Info</h3>

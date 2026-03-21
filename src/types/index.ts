@@ -49,6 +49,21 @@ export interface DictionaryResponse {
   }[];
 }
 
+export interface UsagePattern {
+  pattern: string;  // e.g., "conceive of X"
+  meaning: string;  // e.g., "imagine / form concept"
+}
+
+export interface UsageDomain {
+  domain: string;   // e.g., "Intellectual Domain"
+  patterns: UsagePattern[];
+}
+
+export interface UsageMap {
+  word: string;
+  domains: UsageDomain[];
+}
+
 export type ReviewState = 'idle' | 'showing-front' | 'showing-back' | 'complete';
 
 export interface ReviewSessionState {
