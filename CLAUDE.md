@@ -74,3 +74,19 @@ Configured via `next-pwa` in [next.config.mjs](next.config.mjs). Service worker 
 ### Testing
 
 Vitest tests live alongside source in `src/lib/__tests__/`. Current coverage: SRS algorithm (47 tests) and utility functions (22 tests). No component tests yet.
+
+## Deployment
+
+### Database (Supabase)
+Always use the Supabase CLI for any database-related deployment tasks:
+- Run migrations: `supabase db push`
+- Generate types: `supabase gen types typescript --local > src/types/supabase.ts`
+- Link to project: `supabase link --project-ref <project-ref>`
+- Never apply schema changes directly via the Supabase dashboard; always use migration files managed by the CLI
+
+### Frontend (Vercel)
+Always use the Vercel CLI for any frontend deployment tasks:
+- Deploy preview: `vercel`
+- Deploy to production: `vercel --prod`
+- Pull environment variables: `vercel env pull .env.local`
+- Never deploy by pushing to a branch and relying on auto-deploy when a controlled deploy is needed; use the CLI explicitly

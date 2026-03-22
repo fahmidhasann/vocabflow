@@ -1,4 +1,4 @@
-import type { Word, ReviewSession, Meaning, Rating, SrsStage } from '@/types';
+import type { Word, ReviewSession, Meaning, Rating, SrsStage, UsageMap } from '@/types';
 
 // ─── Word mappers ────────────────────────────────────────────────────────────
 
@@ -17,6 +17,7 @@ export interface WordRow {
   srs_stage: SrsStage;
   created_at: string;
   updated_at: string;
+  usage_map: unknown;
 }
 
 export function rowToWord(row: WordRow): Word {
@@ -31,6 +32,7 @@ export function rowToWord(row: WordRow): Word {
     interval: row.interval,
     repetitions: row.repetitions,
     nextReviewDate: row.next_review_date,
+    usageMap: row.usage_map ? (row.usage_map as UsageMap) : undefined,
     srsStage: row.srs_stage,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
@@ -49,6 +51,7 @@ export function wordToInsert(
     meanings: data.meanings,
     example: data.example ?? null,
     notes: data.notes ?? null,
+    usage_map: data.usageMap ?? null,
     ease_factor: data.easeFactor,
     interval: data.interval,
     repetitions: data.repetitions,
@@ -65,6 +68,7 @@ export function wordToUpdate(data: Partial<Word>) {
   if (data.meanings !== undefined) row.meanings = data.meanings;
   if (data.example !== undefined) row.example = data.example ?? null;
   if (data.notes !== undefined) row.notes = data.notes ?? null;
+  if (data.usageMap !== undefined) row.usage_map = data.usageMap ?? null;
   if (data.easeFactor !== undefined) row.ease_factor = data.easeFactor;
   if (data.interval !== undefined) row.interval = data.interval;
   if (data.repetitions !== undefined) row.repetitions = data.repetitions;

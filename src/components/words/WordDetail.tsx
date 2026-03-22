@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
@@ -27,6 +27,14 @@ export function WordDetail({ word }: WordDetailProps) {
   const router = useRouter();
   const { toast } = useToast();
   const usageMap = useUsageMap();
+
+  // Auto-persist usage map to DB whenever a new one is generated
+  useEffect(() => {
+    if (usageMap.status === 'success' && word.id) {
+      updateWord(word.id, { usageMap: usageMap.data });
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [usageMap.status]);
 
   async function handleSave(data: Parameters<typeof updateWord>[1]) {
     if (!word.id) return;
@@ -105,32 +113,47 @@ export function WordDetail({ word }: WordDetailProps) {
       )}
 
       <Card>
-        {usageMap.status === 'idle' && (
-          <button
-            onClick={() => usageMap.generate(word.word)}
-            className="font-mono uppercase text-ox-accent hover:text-ox-ink transition-colors"
-            style={labelStyle}
-          >
-            Generate Usage Map ↓
-          </button>
-        )}
-        {usageMap.status === 'loading' && (
-          <p className="font-mono uppercase text-ox-muted" style={labelStyle}>Generating…</p>
-        )}
-        {usageMap.status === 'error' && (
+        {usageMap.status === 'idle' && word.usageMap ? (
           <div>
-            <p className="font-mono uppercase text-red-500 mb-1" style={labelStyle}>Failed to generate</p>
+            <UsageMapTree data={word.usageMap} />
             <button
               onClick={() => usageMap.generate(word.word)}
-              className="font-mono uppercase text-ox-accent hover:text-ox-ink transition-colors"
+              className="font-mono uppercase text-ox-muted hover:text-ox-accent transition-colors mt-3"
               style={labelStyle}
             >
-              Try again
+              Regenerate ↻
             </button>
           </div>
-        )}
-        {usageMap.status === 'success' && (
-          <UsageMapTree data={usageMap.data} />
+        ) : (
+          <>
+            {usageMap.status === 'idle' && (
+              <button
+                onClick={() => usageMap.generate(word.word)}
+                className="font-mono uppercase text-ox-accent hover:text-ox-ink transition-colors"
+                style={labelStyle}
+              >
+                Generate Usage Map ↓
+              </button>
+            )}
+            {usageMap.status === 'loading' && (
+              <p className="font-mono uppercase text-ox-muted" style={labelStyle}>Generating…</p>
+            )}
+            {usageMap.status === 'error' && (
+              <div>
+                <p className="font-mono uppercase text-red-500 mb-1" style={labelStyle}>Failed to generate</p>
+                <button
+                  onClick={() => usageMap.generate(word.word)}
+                  className="font-mono uppercase text-ox-accent hover:text-ox-ink transition-colors"
+                  style={labelStyle}
+                >
+                  Try again
+                </button>
+              </div>
+            )}
+            {usageMap.status === 'success' && (
+              <UsageMapTree data={usageMap.data} />
+            )}
+          </>
         )}
       </Card>
 

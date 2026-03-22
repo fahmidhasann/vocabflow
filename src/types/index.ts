@@ -5,6 +5,7 @@ export interface Word {
   meanings: Meaning[];
   example?: string;
   notes?: string;
+  usageMap?: UsageMap;
   easeFactor: number;
   interval: number;
   repetitions: number;

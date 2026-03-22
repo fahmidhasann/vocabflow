@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { rowToWord, wordToInsert, wordToUpdate, type WordRow } from '@/lib/supabase/mappers';
-import type { Word, Meaning, SrsStage } from '@/types';
+import type { Word, Meaning, SrsStage, UsageMap } from '@/types';
 import { newWordSrsFields } from '@/lib/srs';
 import { todayDateString } from '@/lib/utils';
 
@@ -76,6 +76,7 @@ export async function addWord(data: {
   meanings: Meaning[];
   example?: string;
   notes?: string;
+  usageMap?: UsageMap;
 }): Promise<string> {
   const supabase = createClient();
   const { data: { user } } = await supabase.auth.getUser();
