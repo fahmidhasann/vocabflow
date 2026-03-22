@@ -29,10 +29,10 @@ export default function DashboardPage() {
 
         {/* Due Today CTA */}
         <Card className="text-center">
-          <p className="text-4xl font-bold text-indigo-600 dark:text-indigo-400 mb-1">
+          <p className="font-display font-bold text-ox-accent mb-1" style={{ fontSize: '40px' }}>
             {dueWords.length}
           </p>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+          <p className="font-serif text-ox-muted mb-4" style={{ fontSize: '13px' }}>
             {dueWords.length === 1 ? 'word' : 'words'} due for review
           </p>
           {dueWords.length > 0 ? (
@@ -49,16 +49,16 @@ export default function DashboardPage() {
         {/* Quick Stats */}
         <div className="grid grid-cols-3 gap-3">
           <Card className="text-center">
-            <p className="text-xl font-bold text-gray-900 dark:text-gray-100">{stats.total}</p>
-            <p className="text-xs text-gray-500 dark:text-gray-400">Total</p>
+            <p className="font-display font-semibold text-ox-ink-deep" style={{ fontSize: '22px' }}>{stats.total}</p>
+            <p className="font-mono uppercase text-ox-muted mt-0.5" style={{ fontSize: '9px', letterSpacing: '2px' }}>Total</p>
           </Card>
           <Card className="text-center">
-            <p className="text-xl font-bold text-blue-600 dark:text-blue-400">{stats.byStage.learning + stats.byStage.reviewing}</p>
-            <p className="text-xs text-gray-500 dark:text-gray-400">Learning</p>
+            <p className="font-display font-semibold text-ox-accent" style={{ fontSize: '22px' }}>{stats.byStage.learning + stats.byStage.reviewing}</p>
+            <p className="font-mono uppercase text-ox-muted mt-0.5" style={{ fontSize: '9px', letterSpacing: '2px' }}>Learning</p>
           </Card>
           <Card className="text-center">
-            <p className="text-xl font-bold text-green-600 dark:text-green-400">{stats.byStage.mastered}</p>
-            <p className="text-xs text-gray-500 dark:text-gray-400">Mastered</p>
+            <p className="font-display font-semibold text-ox-accent-light" style={{ fontSize: '22px' }}>{stats.byStage.mastered}</p>
+            <p className="font-mono uppercase text-ox-muted mt-0.5" style={{ fontSize: '9px', letterSpacing: '2px' }}>Mastered</p>
           </Card>
         </div>
       </div>

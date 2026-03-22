@@ -8,18 +8,28 @@
     "start": "next start",
     "lint": "next lint",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "build:mobile": "NEXT_PUBLIC_BUILD_TARGET=capacitor next build",
+    "cap:sync": "npx cap sync",
+    "mobile:android": "npm run build:mobile && npm run cap:sync && npx cap open android"
   },
   "dependencies": {
+    "@capacitor/app": "^8.0.1",
+    "@capacitor/browser": "^8.0.2",
+    "@capacitor/core": "^8.2.0",
+    "@capacitor/splash-screen": "^8.0.1",
+    "@capacitor/status-bar": "^8.0.1",
     "@supabase/ssr": "^0.9.0",
     "@supabase/supabase-js": "^2.99.1",
-    "groq-sdk": "^1.1.1",
     "next": "14.2.35",
     "next-pwa": "^5.6.0",
     "react": "^18",
     "react-dom": "^18"
   },
   "devDependencies": {
+    "@capacitor/android": "^8.2.0",
+    "@capacitor/assets": "^3.0.5",
+    "@capacitor/cli": "^8.2.0",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",

@@ -1,10 +1,29 @@
 'use client';
 
 import { createClient } from '@/lib/supabase/client';
+import { isNativePlatform } from '@/lib/platform';
+
+const NATIVE_REDIRECT = 'com.vocabflow.app://auth/callback';
 
 export function LoginButton() {
   async function handleLogin() {
     const supabase = createClient();
+
+    if (isNativePlatform()) {
+      const { data } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: NATIVE_REDIRECT,
+          skipBrowserRedirect: true,
+        },
+      });
+      if (data?.url) {
+        const { Browser } = await import('@capacitor/browser');
+        await Browser.open({ url: data.url });
+      }
+      return;
+    }
+
     await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {

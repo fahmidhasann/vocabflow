@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/client';
 import { wordToUpdate, sessionToInsert } from '@/lib/supabase/mappers';
 import { calculateNextReview } from '@/lib/srs';
 import { todayDateString } from '@/lib/utils';
+import { emit } from '@/lib/events';
 import type { Word, Rating, ReviewSessionState } from '@/types';
 
 const INITIAL_STATE: ReviewSessionState = {
@@ -75,6 +76,8 @@ export function useReviewSession() {
         value: todayDateString(),
       });
 
+      emit('words-changed');
+      emit('sessions-changed');
       setSession((s) => ({
         ...s,
         state: 'complete',

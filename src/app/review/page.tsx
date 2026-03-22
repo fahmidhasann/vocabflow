@@ -10,6 +10,7 @@ import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { Button } from '@/components/ui/Button';
 import { useDueWords } from '@/hooks/useWords';
 import { useReviewSession } from '@/hooks/useReviewSession';
+import { useEffect } from 'react';
 import Link from 'next/link';
 
 export default function ReviewPage() {
@@ -21,6 +22,23 @@ export default function ReviewPage() {
       session.startSession(dueWords);
     }
   }
+
+  useEffect(() => {
+    function handleKey(e: KeyboardEvent) {
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+      if (session.state === 'showing-front' && (e.key === ' ' || e.key === 'Enter')) {
+        e.preventDefault();
+        session.showAnswer();
+      } else if (session.state === 'showing-back') {
+        if (e.key === '1') session.rateAndNext(0);
+        else if (e.key === '2') session.rateAndNext(1);
+        else if (e.key === '3') session.rateAndNext(2);
+        else if (e.key === '4') session.rateAndNext(3);
+      }
+    }
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [session]);
 
   if (dueWords === undefined) {
     return <PageShell><LoadingSpinner /></PageShell>;
@@ -69,6 +87,7 @@ export default function ReviewPage() {
           wordsReviewed={session.words.length}
           ratings={session.ratings}
           duration={duration}
+          words={session.words}
           onRestart={() => {
             session.resetSession();
           }}

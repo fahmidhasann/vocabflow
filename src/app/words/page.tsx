@@ -7,6 +7,7 @@ import { EmptyState } from '@/components/ui/EmptyState';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { Button } from '@/components/ui/Button';
 import { useWords } from '@/hooks/useWords';
+import { useDebounce } from '@/hooks/useDebounce';
 import { cn } from '@/lib/utils';
 import type { SrsStage } from '@/types';
 import Link from 'next/link';
@@ -22,7 +23,8 @@ const tabs: { label: string; value: SrsStage | undefined }[] = [
 export default function WordsPage() {
   const [search, setSearch] = useState('');
   const [stage, setStage] = useState<SrsStage | undefined>(undefined);
-  const words = useWords({ stage, search });
+  const debouncedSearch = useDebounce(search);
+  const words = useWords({ stage, search: debouncedSearch });
 
   return (
     <PageShell title="Words">

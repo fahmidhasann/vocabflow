@@ -1,5 +1,7 @@
 'use client';
 
+import { Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { PageShell } from '@/components/layout/PageShell';
 import { WordDetail } from '@/components/words/WordDetail';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
@@ -8,8 +10,9 @@ import { useWord } from '@/hooks/useWords';
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 
-export default function WordDetailPage({ params }: { params: { id: string } }) {
-  const { id } = params;
+function WordDetailContent() {
+  const searchParams = useSearchParams();
+  const id = searchParams.get('id') ?? '';
   const word = useWord(id);
 
   if (word === undefined) {
@@ -30,5 +33,13 @@ export default function WordDetailPage({ params }: { params: { id: string } }) {
     <PageShell>
       <WordDetail word={word} />
     </PageShell>
+  );
+}
+
+export default function WordDetailPage() {
+  return (
+    <Suspense fallback={<PageShell><LoadingSpinner /></PageShell>}>
+      <WordDetailContent />
+    </Suspense>
   );
 }

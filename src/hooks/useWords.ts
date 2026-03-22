@@ -6,6 +6,7 @@ import { rowToWord, wordToInsert, wordToUpdate, type WordRow } from '@/lib/supab
 import type { Word, Meaning, SrsStage, UsageMap } from '@/types';
 import { newWordSrsFields } from '@/lib/srs';
 import { todayDateString } from '@/lib/utils';
+import { emit, subscribe } from '@/lib/events';
 
 export function useWords(filter?: { stage?: SrsStage; search?: string }) {
   const [words, setWords] = useState<Word[] | undefined>(undefined);
@@ -27,6 +28,7 @@ export function useWords(filter?: { stage?: SrsStage; search?: string }) {
     }
 
     fetch();
+    return subscribe('words-changed', fetch);
   }, [filter?.stage, filter?.search]);
 
   return words;
@@ -38,14 +40,18 @@ export function useWord(id: string | undefined) {
   useEffect(() => {
     if (!id) return;
     const supabase = createClient();
-    supabase
-      .from('words')
-      .select('*')
-      .eq('id', id)
-      .single()
-      .then(({ data }) => {
-        setWord(data ? rowToWord(data as WordRow) : null);
-      });
+
+    async function fetch() {
+      const { data } = await supabase
+        .from('words')
+        .select('*')
+        .eq('id', id)
+        .single();
+      setWord(data ? rowToWord(data as WordRow) : null);
+    }
+
+    fetch();
+    return subscribe('words-changed', fetch);
   }, [id]);
 
   return word;
@@ -58,13 +64,16 @@ export function useDueWords() {
     const supabase = createClient();
     const today = todayDateString();
 
-    supabase
-      .from('words')
-      .select('*')
-      .lte('next_review_date', today)
-      .then(({ data }) => {
-        setWords(data ? (data as WordRow[]).map(rowToWord) : []);
-      });
+    async function fetch() {
+      const { data } = await supabase
+        .from('words')
+        .select('*')
+        .lte('next_review_date', today);
+      setWords(data ? (data as WordRow[]).map(rowToWord) : []);
+    }
+
+    fetch();
+    return subscribe('words-changed', fetch);
   }, []);
 
   return words;
@@ -92,6 +101,7 @@ export async function addWord(data: {
     .single();
 
   if (error) throw error;
+  emit('words-changed');
   return row.id;
 }
 
@@ -102,10 +112,12 @@ export async function updateWord(id: string, data: Partial<Word>) {
     .update(wordToUpdate(data))
     .eq('id', id);
   if (error) throw error;
+  emit('words-changed');
 }
 
 export async function deleteWord(id: string) {
   const supabase = createClient();
   const { error } = await supabase.from('words').delete().eq('id', id);
   if (error) throw error;
+  emit('words-changed');
 }

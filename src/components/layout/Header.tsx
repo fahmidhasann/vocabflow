@@ -20,7 +20,7 @@ export function Header() {
 
   return (
     <header
-      className="sticky top-0 z-40 border-b border-ox-border bg-[rgba(245,240,232,0.96)] dark:bg-[rgba(28,23,16,0.96)] backdrop-blur-sm"
+      className="sticky top-0 z-40 border-b border-ox-border bg-[rgba(245,240,232,0.96)] dark:bg-[rgba(28,23,16,0.96)] backdrop-blur-sm safe-area-top"
     >
       <div className="max-w-2xl mx-auto px-4 h-14 flex items-center justify-between">
         <Link href="/" className="font-display font-bold italic text-ox-ink-deep" style={{ fontSize: '16px' }}>

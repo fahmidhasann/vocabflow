@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { rowToSession, type ReviewSessionRow, type WordRow } from '@/lib/supabase/mappers';
+import { subscribe } from '@/lib/events';
 import type { ReviewSession } from '@/types';
 
 export function useStats() {
@@ -50,6 +51,9 @@ export function useStats() {
     }
 
     fetch();
+    const unsubWords = subscribe('words-changed', fetch);
+    const unsubSessions = subscribe('sessions-changed', fetch);
+    return () => { unsubWords(); unsubSessions(); };
   }, []);
 
   return stats;

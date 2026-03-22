@@ -1,5 +1,6 @@
 'use client';
 
+import { useRef } from 'react';
 import type { Word } from '@/types';
 
 interface ReviewCardProps {
@@ -11,6 +12,18 @@ interface ReviewCardProps {
 export function ReviewCard({ word, showBack, onFlip }: ReviewCardProps) {
   const displayedMeanings = word.meanings.slice(0, 3);
   const hiddenCount = word.meanings.length - displayedMeanings.length;
+  const touchStartY = useRef<number | null>(null);
+
+  function handleTouchStart(e: React.TouchEvent) {
+    touchStartY.current = e.touches[0].clientY;
+  }
+
+  function handleTouchEnd(e: React.TouchEvent) {
+    if (showBack || touchStartY.current === null) return;
+    const delta = e.changedTouches[0].clientY - touchStartY.current;
+    if (delta > 50) onFlip();
+    touchStartY.current = null;
+  }
 
   return (
     <div
@@ -19,6 +32,8 @@ export function ReviewCard({ word, showBack, onFlip }: ReviewCardProps) {
         background: 'var(--color-paper)',
         boxShadow: '0 4px 20px rgba(26,18,8,0.07)',
       }}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
     >
       {/* Word area — always visible, tappable when unrevealed */}
       <div

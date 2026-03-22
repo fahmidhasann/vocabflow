@@ -35,8 +35,26 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+.safe-area-top {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
 .safe-area-bottom {
   padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* Native app feel when running in Capacitor */
+html.native-app {
+  -webkit-user-select: none;
+  user-select: none;
+  overscroll-behavior: none;
+}
+
+html.native-app input,
+html.native-app textarea,
+html.native-app [contenteditable] {
+  -webkit-user-select: text;
+  user-select: text;
 }
 
 @keyframes slide-up {

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { todayDateString } from '@/lib/utils';
+import { subscribe } from '@/lib/events';
 
 export function useStreak() {
   const [result, setResult] = useState<
@@ -52,6 +53,7 @@ export function useStreak() {
     }
 
     fetch();
+    return subscribe('sessions-changed', fetch);
   }, []);
 
   return result;

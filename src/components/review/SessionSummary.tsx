@@ -5,12 +5,13 @@ import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { RATING_LABELS } from '@/lib/constants';
 import { formatDuration } from '@/lib/utils';
-import type { Rating } from '@/types';
+import type { Rating, Word } from '@/types';
 
 interface SessionSummaryProps {
   wordsReviewed: number;
   ratings: Record<string, Rating>;
   duration: number;
+  words: Word[];
   onRestart: () => void;
 }
 
@@ -21,7 +22,9 @@ const ratingBarColors: Record<number, string> = {
   3: '#5a90c0',
 };
 
-export function SessionSummary({ wordsReviewed, ratings, duration, onRestart }: SessionSummaryProps) {
+export function SessionSummary({ wordsReviewed, ratings, duration, words, onRestart }: SessionSummaryProps) {
+  const hardWords = words.filter((w) => w.id && (ratings[w.id] === 0 || ratings[w.id] === 1));
+
   const ratingCounts = Object.values(ratings).reduce(
     (acc, r) => {
       acc[r] = (acc[r] || 0) + 1;
@@ -74,6 +77,33 @@ export function SessionSummary({ wordsReviewed, ratings, duration, onRestart }: 
           })}
         </div>
       </Card>
+
+      {hardWords.length > 0 && (
+        <Card>
+          <h3 className="font-mono uppercase text-ox-muted mb-3" style={{ fontSize: '9px', letterSpacing: '2px' }}>Needs Work</h3>
+          <div className="space-y-1.5">
+            {hardWords.map((w) => (
+              <Link
+                key={w.id}
+                href={`/words/detail?id=${w.id}`}
+                className="flex items-center justify-between py-1 hover:text-ox-accent transition-colors"
+              >
+                <span className="font-display text-ox-ink-deep" style={{ fontSize: '15px' }}>{w.word}</span>
+                <span
+                  className="font-mono uppercase"
+                  style={{
+                    fontSize: '9px',
+                    letterSpacing: '1px',
+                    color: ratings[w.id!] === 0 ? '#c97070' : '#c4914a',
+                  }}
+                >
+                  {RATING_LABELS[ratings[w.id!]]}
+                </span>
+              </Link>
+            ))}
+          </div>
+        </Card>
+      )}
 
       <div className="flex gap-2">
         <Link href="/" className="flex-1">
