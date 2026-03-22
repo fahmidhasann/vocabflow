@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import type { UsageMap } from '@/types';
-import { createClient } from '@/lib/supabase/client';
 
 type UsageMapState =
   | { status: 'idle' }
@@ -19,14 +18,9 @@ export function useUsageMap() {
     if (!word.trim()) return;
     setState({ status: 'loading' });
     try {
-      const supabase = createClient();
-      const { data: { session } } = await supabase.auth.getSession();
       const res = await fetch(USAGE_MAP_URL, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(session ? { 'Authorization': `Bearer ${session.access_token}` } : {}),
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ word }),
       });
       if (!res.ok) throw new Error('Failed to generate');
