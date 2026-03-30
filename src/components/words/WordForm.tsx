@@ -44,7 +44,8 @@ export function WordForm({ initialData, onSave, saving, submitLabel = 'Save Word
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!word.trim() || meanings.length === 0) return;
+    const hasDefinition = meanings.some((m) => m.definition.trim());
+    if (!word.trim() || !hasDefinition) return;
     onSave({
       word: word.trim(),
       phonetic: phonetic || undefined,
@@ -54,28 +55,63 @@ export function WordForm({ initialData, onSave, saving, submitLabel = 'Save Word
     });
   }
 
-  const inputClass = 'w-full px-3 py-2 rounded-sm border border-ox-border bg-ox-bg font-serif text-[14px] text-ox-ink-deep placeholder:text-ox-muted placeholder:italic focus:outline-none focus:ring-2 focus:ring-ox-accent focus:border-transparent';
-  const labelClass = 'block font-mono uppercase text-ox-muted mb-1' as const;
-  const labelStyle = { fontSize: '10px', letterSpacing: '2px' } as const;
+  const inputClass = 'w-full rounded-2xl border border-ox-border bg-ox-surface px-4 py-3 font-serif text-[15px] text-ox-ink-deep placeholder:text-ox-muted placeholder:italic focus:outline-none focus:ring-2 focus:ring-ox-accent focus:border-transparent';
+  const hasDefinition = meanings.some((m) => m.definition.trim());
+
+  function SectionHeading({ title, description }: { title: string; description?: string }) {
+    return (
+      <div className="space-y-1">
+        <p className="font-mono text-[10px] uppercase tracking-[0.26em] text-ox-muted">{title}</p>
+        {description && <p className="font-serif text-[14px] text-ox-muted">{description}</p>}
+      </div>
+    );
+  }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <div>
-        <label className={labelClass} style={labelStyle}>Word</label>
-        <input type="text" value={word} onChange={(e) => setWord(e.target.value)} className={inputClass} required />
-      </div>
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <section className="space-y-4">
+        <SectionHeading
+          title="Core details"
+          description="Keep the definition concise and memorable. You can refine the meaning after lookup."
+        />
 
-      <div>
-        <label className={labelClass} style={labelStyle}>Phonetic</label>
-        <input type="text" value={phonetic} onChange={(e) => setPhonetic(e.target.value)} className={inputClass} placeholder="/fəˈnɛtɪk/" />
-      </div>
+        <div>
+          <label className="mb-1.5 block font-mono text-[10px] uppercase tracking-[0.22em] text-ox-muted">Word</label>
+          <input type="text" value={word} onChange={(e) => setWord(e.target.value)} className={inputClass} required />
+        </div>
+        <div>
+          <label className="mb-1.5 block font-mono text-[10px] uppercase tracking-[0.22em] text-ox-muted">Phonetic</label>
+          <input type="text" value={phonetic} onChange={(e) => setPhonetic(e.target.value)} className={inputClass} placeholder="/fəˈnɛtɪk/" />
+        </div>
 
-      <div>
-        <label className={labelClass} style={labelStyle}>Meanings</label>
         <div className="space-y-3">
+          <div className="flex items-center justify-between gap-3">
+            <label className="block font-mono text-[10px] uppercase tracking-[0.22em] text-ox-muted">Meanings</label>
+            <Button type="button" variant="ghost" size="sm" onClick={addMeaning}>
+              Add meaning
+            </Button>
+          </div>
           {meanings.map((m, i) => (
-            <div key={i} className="flex gap-2 items-start">
-              <div className="flex-1 flex flex-col gap-1">
+            <div key={i} className="rounded-[24px] border border-ox-line bg-ox-surface-alt p-4">
+              <div className="mb-3 flex items-center justify-between gap-3">
+                <p className="font-mono text-[9px] uppercase tracking-[0.2em] text-ox-muted">
+                  Meaning {i + 1}
+                </p>
+                {meanings.length > 1 && (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => removeMeaning(i)}
+                    aria-label="Remove meaning"
+                    className="text-ox-danger hover:bg-ox-danger-soft hover:text-ox-danger"
+                  >
+                    Remove
+                  </Button>
+                )}
+              </div>
+
+              <div className="flex flex-col gap-3">
                 <input
                   type="text"
                   value={m.partOfSpeech}
@@ -91,36 +127,29 @@ export function WordForm({ initialData, onSave, saving, submitLabel = 'Save Word
                   placeholder="Definition"
                 />
               </div>
-              {meanings.length > 1 && (
-                <button
-                  type="button"
-                  onClick={() => removeMeaning(i)}
-                  className="text-ox-muted hover:text-[#c97070] p-2 mt-1 transition-colors"
-                  aria-label="Remove meaning"
-                >
-                  &times;
-                </button>
-              )}
             </div>
           ))}
         </div>
-        <Button type="button" variant="ghost" size="sm" onClick={addMeaning} className="mt-2">
-          + Add meaning
-        </Button>
-      </div>
+      </section>
 
-      <div>
-        <label className={labelClass} style={labelStyle}>Example</label>
-        <input type="text" value={example} onChange={(e) => setExample(e.target.value)} className={inputClass} placeholder="Use the word in a sentence…" />
-      </div>
+      <section className="space-y-4">
+        <SectionHeading
+          title="Optional notes"
+          description="Add a sentence or a memory cue if it will help the word stick."
+        />
+        <div>
+          <label className="mb-1.5 block font-mono text-[10px] uppercase tracking-[0.22em] text-ox-muted">Example</label>
+          <input type="text" value={example} onChange={(e) => setExample(e.target.value)} className={inputClass} placeholder="Use the word in a sentence..." />
+        </div>
 
-      <div>
-        <label className={labelClass} style={labelStyle}>Notes</label>
-        <textarea value={notes} onChange={(e) => setNotes(e.target.value)} className={`${inputClass} resize-none`} rows={2} placeholder="Personal notes…" />
-      </div>
+        <div>
+          <label className="mb-1.5 block font-mono text-[10px] uppercase tracking-[0.22em] text-ox-muted">Notes</label>
+          <textarea value={notes} onChange={(e) => setNotes(e.target.value)} className={`${inputClass} resize-y min-h-[110px]`} rows={3} placeholder="Personal notes, mnemonics, or usage reminders..." />
+        </div>
+      </section>
 
-      <Button type="submit" disabled={!word.trim() || meanings.length === 0 || saving} className="w-full">
-        {saving ? 'Saving…' : submitLabel}
+      <Button type="submit" disabled={!word.trim() || !hasDefinition || saving} size="lg" className="w-full">
+        {saving ? 'Saving...' : submitLabel}
       </Button>
     </form>
   );

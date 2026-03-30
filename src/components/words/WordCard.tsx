@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/Badge';
+import { formatDate, todayDateString } from '@/lib/utils';
 import type { Word } from '@/types';
 
 interface WordCardProps {
@@ -10,52 +11,56 @@ interface WordCardProps {
 export function WordCard({ word }: WordCardProps) {
   const [expanded, setExpanded] = useState(false);
   const hasMore = word.meanings.length > 1;
+  const isDue = word.nextReviewDate <= todayDateString();
 
   return (
     <div
-      className="p-4 bg-ox-surface rounded-lg border border-ox-border hover:border-ox-accent transition-[border-color] duration-150"
-      style={{ boxShadow: '0 2px 8px rgba(26,18,8,0.06)' }}
+      className="rounded-[26px] border border-ox-border bg-[linear-gradient(180deg,color-mix(in_srgb,var(--color-surface)_90%,white_10%),var(--color-surface))] p-4 transition-[border-color,transform] duration-150 hover:-translate-y-px hover:border-ox-accent"
+      style={{ boxShadow: '0 14px 30px rgba(26,18,8,0.08)' }}
     >
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
-          <div className="flex items-baseline gap-2">
-            <Link href={`/words/detail?id=${word.id}`} className="hover:text-ox-accent transition-colors">
-              <h3 className="font-display font-semibold text-ox-ink-deep" style={{ fontSize: '18px' }}>
-                {word.word}
-              </h3>
-            </Link>
-            {word.phonetic && (
-              <span className="font-serif font-light italic text-ox-muted flex-shrink-0" style={{ fontSize: '11px' }}>
-                {word.phonetic}
-              </span>
-            )}
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0">
+              <p className="font-mono text-[9px] uppercase tracking-[0.2em] text-ox-muted">
+                {isDue ? 'Due now' : `Next review ${formatDate(word.nextReviewDate)}`}
+              </p>
+              <Link href={`/words/detail?id=${word.id}`} className="mt-1 block transition-colors hover:text-ox-accent">
+                <h3 className="font-display text-[24px] font-semibold leading-none text-ox-ink-deep">
+                  {word.word}
+                </h3>
+              </Link>
+            </div>
+            <Badge stage={word.srsStage} />
           </div>
 
+          {word.phonetic && (
+            <p className="mt-3 font-serif text-[12px] italic text-ox-muted">
+              {word.phonetic}
+            </p>
+          )}
+
           {expanded ? (
-            <div className="mt-2 space-y-2">
+            <div className="mt-4 space-y-2">
               {word.meanings.map((m, i) => (
-                <p
+                <div
                   key={i}
-                  className="font-serif italic text-ox-muted border-l-2 border-ox-border pl-2.5"
-                  style={{ fontSize: '11px', lineHeight: '1.4' }}
+                  className="rounded-2xl border border-ox-line bg-ox-surface-alt px-3 py-3"
                 >
                   {m.partOfSpeech && (
-                    <span className="not-italic font-mono uppercase mr-1" style={{ fontSize: '9px', letterSpacing: '1px' }}>
+                    <span className="mr-2 font-mono text-[9px] uppercase tracking-[0.16em] text-ox-muted">
                       {m.partOfSpeech}
                     </span>
                   )}
-                  {m.definition}
-                </p>
+                  <span className="font-serif text-[14px] leading-6 text-ox-ink">{m.definition}</span>
+                </div>
               ))}
             </div>
           ) : (
             word.meanings[0]?.definition && (
-              <p
-                className="font-serif italic text-ox-muted mt-1 border-l-2 border-ox-border pl-2.5 truncate"
-                style={{ fontSize: '11px', lineHeight: '1.4' }}
-              >
+              <p className="mt-4 rounded-2xl border border-ox-line bg-ox-surface-alt px-3 py-3 font-serif text-[14px] italic leading-6 text-ox-muted">
                 {word.meanings[0].partOfSpeech && (
-                  <span className="not-italic font-mono uppercase mr-1" style={{ fontSize: '9px', letterSpacing: '1px' }}>
+                  <span className="mr-2 font-mono text-[9px] uppercase tracking-[0.16em] not-italic text-ox-muted">
                     {word.meanings[0].partOfSpeech}
                   </span>
                 )}
@@ -64,16 +69,21 @@ export function WordCard({ word }: WordCardProps) {
             )
           )}
         </div>
-        <div className="flex flex-col items-end gap-1.5 flex-shrink-0">
-          <Badge stage={word.srsStage} />
+
+        <div className="flex flex-shrink-0 flex-col items-end gap-2">
+          <Link
+            href={`/words/detail?id=${word.id}`}
+            className="rounded-full border border-ox-line px-3 py-1 font-mono text-[9px] uppercase tracking-[0.16em] text-ox-muted transition-colors hover:border-ox-accent hover:text-ox-accent"
+          >
+            Open
+          </Link>
           {hasMore && (
             <button
               onClick={() => setExpanded((e) => !e)}
-              className="font-mono uppercase text-ox-muted hover:text-ox-accent transition-colors"
-              style={{ fontSize: '8px', letterSpacing: '1px' }}
-              aria-label={expanded ? 'Collapse' : 'Expand'}
+              className="rounded-full border border-ox-line px-3 py-1 font-mono text-[9px] uppercase tracking-[0.16em] text-ox-muted transition-colors hover:border-ox-accent hover:text-ox-accent"
+              aria-label={expanded ? 'Collapse meanings' : 'Expand meanings'}
             >
-              {expanded ? '▲' : '▼'}
+              {expanded ? 'Less' : `${word.meanings.length} meanings`}
             </button>
           )}
         </div>

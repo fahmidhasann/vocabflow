@@ -20,32 +20,40 @@ export function RatingButtons({ word, onRate }: RatingButtonsProps) {
   const intervals = previewIntervals(word);
 
   return (
-    <div className="grid grid-cols-4 gap-2 w-full max-w-md mx-auto">
+    <div className="mx-auto grid w-full max-w-2xl grid-cols-2 gap-3 md:grid-cols-4">
       {([0, 1, 2, 3] as Rating[]).map((rating) => {
         const colors = ratingColors[rating];
         return (
           <button
             key={rating}
             onClick={() => onRate(rating)}
-            className="flex flex-col items-center py-3 px-2 rounded-[4px] transition-colors"
+            className="flex min-h-[108px] flex-col items-start justify-between rounded-[24px] border px-4 py-4 text-left transition-[background,border-color,transform] duration-150 hover:-translate-y-px"
             style={{
               border: `1.5px solid ${colors.border}`,
               color: colors.text,
-              background: 'transparent',
+              background: `${colors.border}12`,
             }}
-            onMouseEnter={(e) => {
-              (e.currentTarget as HTMLButtonElement).style.background = `${colors.border}14`;
-            }}
-            onMouseLeave={(e) => {
-              (e.currentTarget as HTMLButtonElement).style.background = 'transparent';
-            }}
+            aria-keyshortcuts={`${rating + 1}`}
           >
-            <span className="font-mono uppercase" style={{ fontSize: '10px', letterSpacing: '1px' }}>
-              {RATING_LABELS[rating]}
-            </span>
-            <span className="font-serif italic text-ox-muted mt-0.5" style={{ fontSize: '10px' }}>
-              {formatInterval(intervals[rating])}
-            </span>
+            <div className="flex w-full items-start justify-between gap-3">
+              <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-ox-muted">
+                {rating + 1}
+              </span>
+              <span className="rounded-full border border-current/25 px-2 py-0.5 font-mono text-[8px] uppercase tracking-[0.16em]">
+                {formatInterval(intervals[rating])}
+              </span>
+            </div>
+            <div>
+              <span className="block font-display text-[22px] font-semibold leading-none">
+                {RATING_LABELS[rating]}
+              </span>
+              <span className="mt-2 block font-serif text-[13px] leading-6 text-ox-muted">
+                {rating === 0 && 'Could not recall it.'}
+                {rating === 1 && 'Remembered with effort.'}
+                {rating === 2 && 'Solid recall.'}
+                {rating === 3 && 'Instantly remembered.'}
+              </span>
+            </div>
           </button>
         );
       })}

@@ -19,7 +19,9 @@ interface WordDetailProps {
   word: Word;
 }
 
-const labelStyle = { fontSize: '10px', letterSpacing: '2px' } as const;
+function SectionLabel({ children }: { children: React.ReactNode }) {
+  return <p className="font-mono text-[10px] uppercase tracking-[0.26em] text-ox-muted">{children}</p>;
+}
 
 export function WordDetail({ word }: WordDetailProps) {
   const [editing, setEditing] = useState(false);
@@ -28,7 +30,6 @@ export function WordDetail({ word }: WordDetailProps) {
   const { toast } = useToast();
   const usageMap = useUsageMap();
 
-  // Auto-persist usage map to DB whenever a new one is generated
   useEffect(() => {
     if (usageMap.status === 'success' && word.id) {
       updateWord(word.id, { usageMap: usageMap.data });
@@ -52,135 +53,150 @@ export function WordDetail({ word }: WordDetailProps) {
 
   if (editing) {
     return (
-      <div>
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="font-display font-semibold text-ox-ink-deep" style={{ fontSize: '18px' }}>Edit Word</h2>
-          <Button variant="ghost" size="sm" onClick={() => setEditing(false)}>Cancel</Button>
+      <div className="space-y-5">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <SectionLabel>Edit</SectionLabel>
+            <h2 className="mt-2 font-display text-[30px] font-semibold text-ox-ink-deep">Update this word</h2>
+            <p className="mt-2 font-serif text-[15px] leading-7 text-ox-muted">
+              Refine the definition, notes, or example without changing its review history.
+            </p>
+          </div>
+          <Button variant="secondary" onClick={() => setEditing(false)}>Cancel</Button>
         </div>
-        <WordForm
-          initialData={word}
-          onSave={handleSave}
-          submitLabel="Update Word"
-        />
+
+        <Card padding="lg">
+          <WordForm
+            initialData={word}
+            onSave={handleSave}
+            submitLabel="Update Word"
+          />
+        </Card>
       </div>
     );
   }
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-start justify-between">
-        <div>
-          <h2 className="font-display font-bold text-ox-ink-deep" style={{ fontSize: '40px', letterSpacing: '-0.5px' }}>
-            {word.word}
-          </h2>
-          {word.phonetic && (
-            <p className="font-serif font-light italic text-ox-muted" style={{ fontSize: '13px' }}>
-              {word.phonetic}
-            </p>
-          )}
-        </div>
-        <Badge stage={word.srsStage} />
-      </div>
+    <div className="space-y-5">
+      <Card variant="hero" padding="lg">
+        <div className="flex flex-col gap-5">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div>
+              <SectionLabel>Word profile</SectionLabel>
+              <h2 className="mt-3 font-display text-[46px] font-semibold leading-none text-ox-ink-deep md:text-[58px]">
+                {word.word}
+              </h2>
+              {word.phonetic && (
+                <p className="mt-3 font-serif text-[16px] italic text-ox-muted">
+                  {word.phonetic}
+                </p>
+              )}
+            </div>
+            <Badge stage={word.srsStage} />
+          </div>
 
-      <Card>
-        <h3 className="font-mono uppercase text-ox-muted mb-3" style={labelStyle}>Meanings</h3>
-        <div className="space-y-3">
+          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+            <div className="rounded-2xl border border-ox-line bg-ox-surface px-4 py-4">
+              <p className="font-mono text-[9px] uppercase tracking-[0.18em] text-ox-muted">Interval</p>
+              <p className="mt-2 font-serif text-[15px] text-ox-ink">{word.interval === 0 ? 'New card' : formatInterval(word.interval)}</p>
+            </div>
+            <div className="rounded-2xl border border-ox-line bg-ox-surface px-4 py-4">
+              <p className="font-mono text-[9px] uppercase tracking-[0.18em] text-ox-muted">Ease factor</p>
+              <p className="mt-2 font-serif text-[15px] text-ox-ink">{word.easeFactor.toFixed(2)}</p>
+            </div>
+            <div className="rounded-2xl border border-ox-line bg-ox-surface px-4 py-4">
+              <p className="font-mono text-[9px] uppercase tracking-[0.18em] text-ox-muted">Next review</p>
+              <p className="mt-2 font-serif text-[15px] text-ox-ink">{formatDate(word.nextReviewDate)}</p>
+            </div>
+            <div className="rounded-2xl border border-ox-line bg-ox-surface px-4 py-4">
+              <p className="font-mono text-[9px] uppercase tracking-[0.18em] text-ox-muted">Added</p>
+              <p className="mt-2 font-serif text-[15px] text-ox-ink">{formatDate(word.createdAt)}</p>
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <Button variant="secondary" onClick={() => setEditing(true)} className="sm:min-w-[150px]">Edit Word</Button>
+            <Button variant="ghost" onClick={() => setShowDelete(true)} className="text-ox-danger hover:bg-ox-danger-soft hover:text-ox-danger sm:min-w-[150px]">
+              Delete Word
+            </Button>
+          </div>
+        </div>
+      </Card>
+
+      <Card padding="lg">
+        <SectionLabel>Meanings</SectionLabel>
+        <div className="mt-4 space-y-3">
           {word.meanings.map((m, i) => (
-            <div key={i}>
+            <div key={i} className="rounded-2xl border border-ox-line bg-ox-surface-alt px-4 py-4">
               {m.partOfSpeech && (
-                <p className="font-mono uppercase text-ox-muted mb-0.5" style={{ fontSize: '9px', letterSpacing: '2px' }}>
+                <p className="mb-2 font-mono text-[9px] uppercase tracking-[0.18em] text-ox-muted">
                   {m.partOfSpeech}
                 </p>
               )}
-              <p className="font-serif text-ox-ink" style={{ fontSize: '14px', lineHeight: '1.7' }}>{m.definition}</p>
+              <p className="font-serif text-[15px] leading-7 text-ox-ink">{m.definition}</p>
             </div>
           ))}
         </div>
       </Card>
 
-      {word.example && (
-        <Card>
-          <h3 className="font-mono uppercase text-ox-muted mb-2" style={labelStyle}>Example</h3>
-          <p className="font-serif italic text-ox-muted" style={{ fontSize: '13px' }}>&ldquo;{word.example}&rdquo;</p>
-        </Card>
+      {(word.example || word.notes) && (
+        <div className="grid gap-5 lg:grid-cols-2">
+          {word.example && (
+            <Card padding="lg">
+              <SectionLabel>Example</SectionLabel>
+              <p className="mt-4 font-serif text-[15px] italic leading-7 text-ox-muted">&ldquo;{word.example}&rdquo;</p>
+            </Card>
+          )}
+
+          {word.notes && (
+            <Card padding="lg">
+              <SectionLabel>Notes</SectionLabel>
+              <p className="mt-4 font-serif text-[15px] leading-7 text-ox-ink">{word.notes}</p>
+            </Card>
+          )}
+        </div>
       )}
 
-      {word.notes && (
-        <Card>
-          <h3 className="font-mono uppercase text-ox-muted mb-2" style={labelStyle}>Notes</h3>
-          <p className="font-serif text-ox-ink" style={{ fontSize: '13px' }}>{word.notes}</p>
-        </Card>
-      )}
-
-      <Card>
-        {usageMap.status === 'idle' && word.usageMap ? (
+      <Card padding="lg">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div>
-            <UsageMapTree data={word.usageMap} />
-            <button
-              onClick={() => usageMap.generate(word.word)}
-              className="font-mono uppercase text-ox-muted hover:text-ox-accent transition-colors mt-3"
-              style={labelStyle}
-            >
-              Regenerate ↻
-            </button>
+            <SectionLabel>Usage map</SectionLabel>
+            <p className="mt-2 font-serif text-[15px] leading-7 text-ox-muted">
+              Keep this optional. It is useful when you want more context around how the word tends to appear.
+            </p>
           </div>
-        ) : (
-          <>
-            {usageMap.status === 'idle' && (
-              <button
-                onClick={() => usageMap.generate(word.word)}
-                className="font-mono uppercase text-ox-accent hover:text-ox-ink transition-colors"
-                style={labelStyle}
-              >
-                Generate Usage Map ↓
-              </button>
-            )}
-            {usageMap.status === 'loading' && (
-              <p className="font-mono uppercase text-ox-muted" style={labelStyle}>Generating…</p>
-            )}
-            {usageMap.status === 'error' && (
-              <div>
-                <p className="font-mono uppercase text-red-500 mb-1" style={labelStyle}>Failed to generate</p>
-                <button
-                  onClick={() => usageMap.generate(word.word)}
-                  className="font-mono uppercase text-ox-accent hover:text-ox-ink transition-colors"
-                  style={labelStyle}
-                >
-                  Try again
-                </button>
-              </div>
-            )}
-            {usageMap.status === 'success' && (
-              <UsageMapTree data={usageMap.data} />
-            )}
-          </>
-        )}
-      </Card>
 
-      <Card>
-        <h3 className="font-mono uppercase text-ox-muted mb-3" style={labelStyle}>SRS Info</h3>
-        <div className="grid grid-cols-2 gap-2">
-          <div className="font-mono uppercase text-ox-muted" style={{ fontSize: '9px', letterSpacing: '1px' }}>Interval</div>
-          <div className="font-serif text-ox-ink" style={{ fontSize: '13px' }}>{word.interval === 0 ? 'New' : formatInterval(word.interval)}</div>
-          <div className="font-mono uppercase text-ox-muted" style={{ fontSize: '9px', letterSpacing: '1px' }}>Ease Factor</div>
-          <div className="font-serif text-ox-ink" style={{ fontSize: '13px' }}>{word.easeFactor.toFixed(2)}</div>
-          <div className="font-mono uppercase text-ox-muted" style={{ fontSize: '9px', letterSpacing: '1px' }}>Next Review</div>
-          <div className="font-serif text-ox-ink" style={{ fontSize: '13px' }}>{formatDate(word.nextReviewDate)}</div>
-          <div className="font-mono uppercase text-ox-muted" style={{ fontSize: '9px', letterSpacing: '1px' }}>Added</div>
-          <div className="font-serif text-ox-ink" style={{ fontSize: '13px' }}>{formatDate(word.createdAt)}</div>
+          {usageMap.status === 'idle' && (
+            <Button variant="secondary" onClick={() => usageMap.generate(word.word)}>
+              {word.usageMap ? 'Regenerate Map' : 'Generate Map'}
+            </Button>
+          )}
+        </div>
+
+        <div className="mt-5">
+          {usageMap.status === 'idle' && word.usageMap && (
+            <UsageMapTree data={word.usageMap} />
+          )}
+          {usageMap.status === 'loading' && (
+            <p className="font-serif text-[14px] text-ox-muted">Generating usage map...</p>
+          )}
+          {usageMap.status === 'error' && (
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <p className="font-serif text-[14px] text-ox-danger">Failed to generate the usage map.</p>
+              <Button variant="ghost" onClick={() => usageMap.generate(word.word)}>Try Again</Button>
+            </div>
+          )}
+          {usageMap.status === 'success' && (
+            <UsageMapTree data={usageMap.data} />
+          )}
         </div>
       </Card>
 
-      <div className="flex gap-2">
-        <Button variant="secondary" onClick={() => setEditing(true)} className="flex-1">Edit</Button>
-        <Button variant="danger" onClick={() => setShowDelete(true)} className="flex-1">Delete</Button>
-      </div>
-
-      <Modal open={showDelete} onClose={() => setShowDelete(false)} title="Delete Word">
-        <p className="font-serif text-ox-muted mb-4" style={{ fontSize: '13px' }}>
-          Are you sure you want to delete &ldquo;{word.word}&rdquo;? This cannot be undone.
+      <Modal open={showDelete} onClose={() => setShowDelete(false)} title="Delete word">
+        <p className="mb-5 font-serif text-[15px] leading-7 text-ox-muted">
+          Delete &ldquo;{word.word}&rdquo; from your library and remove it from future review sessions.
         </p>
-        <div className="flex gap-2 justify-end">
+        <div className="flex flex-col gap-3 sm:flex-row sm:justify-end">
           <Button variant="secondary" onClick={() => setShowDelete(false)}>Cancel</Button>
           <Button variant="danger" onClick={handleDelete}>Delete</Button>
         </div>

@@ -23,7 +23,7 @@ export function Badge({ stage, className }: BadgeProps) {
   const styles = BADGE_STYLES[stage];
   return (
     <span
-      className={`inline-flex items-center font-mono text-[8px] uppercase tracking-[1px] px-2 py-0.5 border rounded-sm ${className ?? ''}`}
+      className={`inline-flex items-center rounded-full border px-2.5 py-1 font-mono text-[8px] uppercase tracking-[0.18em] ${className ?? ''}`}
       style={{ background: styles.bg, color: styles.text, borderColor: styles.border }}
     >
       {STAGE_LABELS[stage]}

@@ -21,7 +21,7 @@ function WordDetailContent() {
 
   if (word === null) {
     return (
-      <PageShell>
+      <PageShell eyebrow="Vocabulary" title="Word detail" description="This entry no longer exists in your library.">
         <EmptyState icon="🔍" title="Word not found" description="This word may have been deleted.">
           <Link href="/words"><Button variant="secondary">Back to Words</Button></Link>
         </EmptyState>
@@ -30,7 +30,7 @@ function WordDetailContent() {
   }
 
   return (
-    <PageShell>
+    <PageShell eyebrow="Vocabulary" title="Word detail" description="Review the meaning, notes, usage context, and SRS state for this word.">
       <WordDetail word={word} />
     </PageShell>
   );

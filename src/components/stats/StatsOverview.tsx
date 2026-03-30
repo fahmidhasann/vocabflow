@@ -13,18 +13,18 @@ export function StatsOverview({ total, byStage, totalReviews, totalDuration }: S
   const timeStr = hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
 
   const stats = [
-    { value: total, label: 'Total Words' },
-    { value: byStage.mastered ?? 0, label: 'Mastered' },
-    { value: totalReviews, label: 'Total Reviews' },
-    { value: timeStr, label: 'Time Spent' },
+    { value: total, label: 'Total Words', tone: 'text-ox-accent' },
+    { value: byStage.mastered ?? 0, label: 'Mastered', tone: 'text-ox-success' },
+    { value: totalReviews, label: 'Reviews', tone: 'text-ox-info' },
+    { value: timeStr, label: 'Time Spent', tone: 'text-ox-ink-deep' },
   ];
 
   return (
     <div className="grid grid-cols-2 gap-3">
-      {stats.map(({ value, label }) => (
-        <Card key={label} className="text-center">
-          <p className="font-display font-semibold text-ox-accent" style={{ fontSize: '22px' }}>{value}</p>
-          <p className="font-mono uppercase text-ox-muted mt-0.5" style={{ fontSize: '9px', letterSpacing: '2px' }}>{label}</p>
+      {stats.map(({ value, label, tone }) => (
+        <Card key={label} variant="compact" padding="md" className="text-center">
+          <p className={`font-display text-[28px] font-semibold ${tone}`}>{value}</p>
+          <p className="mt-1 font-mono text-[9px] uppercase tracking-[0.22em] text-ox-muted">{label}</p>
         </Card>
       ))}
     </div>

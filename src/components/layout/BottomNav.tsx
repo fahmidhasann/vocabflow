@@ -16,29 +16,32 @@ export function BottomNav() {
   const pathname = usePathname();
 
   return (
-    <nav
-      className="fixed bottom-0 left-0 right-0 z-40 border-t border-ox-border safe-area-bottom bg-[rgba(245,240,232,0.97)] dark:bg-[rgba(28,23,16,0.97)] backdrop-blur-sm"
-    >
-      <div className="max-w-2xl mx-auto flex justify-around">
-        {navItems.map((item) => {
-          const isActive = item.href === '/' ? pathname === '/' : pathname.startsWith(item.href);
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={cn(
-                'flex flex-col items-center py-2 px-3 transition-colors',
-                isActive ? 'text-ox-accent' : 'text-ox-muted hover:text-ox-ink'
-              )}
-            >
-              <svg className="w-6 h-6 mb-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
-                <path d={item.icon} />
-              </svg>
-              <span className="font-mono uppercase" style={{ fontSize: '8px', letterSpacing: '1px' }}>{item.label}</span>
-            </Link>
-          );
-        })}
-      </div>
-    </nav>
+    <div className="pointer-events-none fixed inset-x-0 bottom-0 z-40 px-3 pb-3 safe-area-bottom">
+      <nav className="pointer-events-auto mx-auto max-w-3xl rounded-[28px] border border-ox-border bg-[rgba(245,240,232,0.86)] p-2 shadow-[0_20px_40px_rgba(26,18,8,0.16)] backdrop-blur-xl dark:bg-[rgba(28,23,16,0.9)]">
+        <div className="flex items-center justify-between gap-1">
+          {navItems.map((item) => {
+            const isActive = item.href === '/' ? pathname === '/' : pathname.startsWith(item.href);
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                aria-current={isActive ? 'page' : undefined}
+                className={cn(
+                  'flex min-w-0 flex-1 flex-col items-center rounded-[20px] px-3 py-2.5 transition-[color,background,border-color,transform] duration-150',
+                  isActive
+                    ? 'border border-ox-border bg-ox-surface text-ox-accent shadow-[inset_0_1px_0_rgba(255,255,255,0.5)]'
+                    : 'border border-transparent text-ox-muted hover:bg-ox-surface-alt hover:text-ox-ink'
+                )}
+              >
+                <svg className="mb-1 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round">
+                  <path d={item.icon} />
+                </svg>
+                <span className="font-mono text-[8px] uppercase tracking-[0.18em]">{item.label}</span>
+              </Link>
+            );
+          })}
+        </div>
+      </nav>
+    </div>
   );
 }

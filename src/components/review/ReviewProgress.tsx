@@ -4,21 +4,22 @@ interface ReviewProgressProps {
 }
 
 export function ReviewProgress({ current, total }: ReviewProgressProps) {
-  const percentage = total > 0 ? Math.round((current / total) * 100) : 0;
+  const currentStep = total > 0 ? Math.min(current + 1, total) : 0;
+  const percentage = total > 0 ? Math.round((currentStep / total) * 100) : 0;
 
   return (
-    <div className="w-full max-w-md mx-auto">
-      <div className="flex justify-between mb-1.5">
-        <span className="font-mono uppercase text-ox-muted" style={{ fontSize: '9px', letterSpacing: '2px' }}>
+    <div className="mx-auto w-full max-w-2xl">
+      <div className="mb-2 flex items-center justify-between gap-3">
+        <span className="font-mono text-[10px] uppercase tracking-[0.26em] text-ox-muted">
           Progress
         </span>
-        <span className="font-mono text-ox-muted" style={{ fontSize: '9px', letterSpacing: '1px' }}>
-          {current} / {total}
+        <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-ox-muted">
+          {currentStep} of {total}
         </span>
       </div>
-      <div className="w-full bg-ox-border rounded-sm overflow-hidden" style={{ height: '3px' }}>
+      <div className="h-2 w-full overflow-hidden rounded-full bg-ox-border">
         <div
-          className="h-full bg-ox-accent rounded-sm transition-[width] duration-300 ease-linear"
+          className="h-full rounded-full bg-[linear-gradient(90deg,var(--color-accent),var(--color-accent-light))] transition-[width] duration-300 ease-linear"
           style={{ width: `${percentage}%` }}
         />
       </div>

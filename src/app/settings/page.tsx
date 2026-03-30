@@ -59,13 +59,11 @@ export default function SettingsPage() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('Not authenticated');
 
-      // Clear existing data first
       await supabase.from('words').delete().eq('user_id', user.id);
       await supabase.from('review_sessions').delete().eq('user_id', user.id);
 
       const now = new Date().toISOString();
 
-      // Import words
       if (data.words.length > 0) {
         const rows = (data.words as WordRow[]).map((w) =>
           wordToInsert(
@@ -88,7 +86,6 @@ export default function SettingsPage() {
         await supabase.from('words').insert(rows);
       }
 
-      // Import sessions
       if (data.reviewSessions?.length > 0) {
         const rows = (data.reviewSessions as ReviewSessionRow[]).map((s) =>
           sessionToInsert(
@@ -131,16 +128,37 @@ export default function SettingsPage() {
   }
 
   return (
-    <PageShell title="Settings">
-      <div className="space-y-4">
-        <Card>
-          <h3 className="font-medium text-gray-900 dark:text-gray-100 mb-3">Data Management</h3>
-          <div className="space-y-3">
-            <Button variant="secondary" onClick={handleExport} className="w-full">
-              Export Data (JSON)
-            </Button>
+    <PageShell
+      eyebrow="Settings"
+      title="Account and data"
+      description="Export your learning history, import a backup, or reset the app if you want to start fresh."
+    >
+      <div className="grid gap-6 lg:grid-cols-[1.1fr,0.9fr]">
+        <Card variant="hero" padding="lg">
+          <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-ox-muted">Data management</p>
+          <h2 className="mt-2 font-display text-[28px] font-semibold italic text-ox-ink-deep">
+            Move your library safely
+          </h2>
+          <p className="mt-3 font-serif text-[15px] leading-7 text-ox-muted">
+            Export creates a portable JSON backup. Import replaces the current cloud data with the file you choose.
+          </p>
 
-            <div>
+          <div className="mt-6 space-y-4">
+            <div className="rounded-[24px] border border-ox-line bg-ox-surface px-4 py-4">
+              <p className="font-mono text-[9px] uppercase tracking-[0.2em] text-ox-muted">Export</p>
+              <p className="mt-2 font-serif text-[14px] leading-6 text-ox-ink">
+                Download your words and review history as a timestamped JSON file.
+              </p>
+              <Button variant="secondary" onClick={handleExport} className="mt-4 w-full sm:w-auto">
+                Export Data
+              </Button>
+            </div>
+
+            <div className="rounded-[24px] border border-ox-line bg-ox-surface px-4 py-4">
+              <p className="font-mono text-[9px] uppercase tracking-[0.2em] text-ox-muted">Import</p>
+              <p className="mt-2 font-serif text-[14px] leading-6 text-ox-ink">
+                Restore from a previous export. Import clears current words and review sessions before loading the file.
+              </p>
               <input
                 ref={fileInputRef}
                 type="file"
@@ -152,34 +170,45 @@ export default function SettingsPage() {
               <Button
                 variant="secondary"
                 onClick={() => fileInputRef.current?.click()}
-                className="w-full"
+                className="mt-4 w-full sm:w-auto"
               >
-                Import Data (JSON)
+                Import Data
               </Button>
             </div>
-
-            <Button variant="danger" onClick={() => setShowClearModal(true)} className="w-full">
-              Clear All Data
-            </Button>
           </div>
         </Card>
 
-        <Card>
-          <h3 className="font-medium text-gray-900 dark:text-gray-100 mb-2">About</h3>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
-            VocabFlow v1.0.0 — A vocabulary learning app with spaced repetition.
-          </p>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-            Your data is securely stored in the cloud.
-          </p>
-        </Card>
+        <div className="space-y-6">
+          <Card padding="lg">
+            <p className="font-mono text-[10px] uppercase tracking-[0.26em] text-ox-muted">About</p>
+            <h3 className="mt-2 font-display text-[24px] font-semibold text-ox-ink-deep">VocabFlow</h3>
+            <p className="mt-3 font-serif text-[15px] leading-7 text-ox-muted">
+              A spaced-repetition vocabulary app designed for deliberate daily practice instead of passive collection.
+            </p>
+            <div className="mt-5 rounded-2xl border border-ox-line bg-ox-surface-alt px-4 py-4">
+              <p className="font-mono text-[9px] uppercase tracking-[0.18em] text-ox-muted">Version</p>
+              <p className="mt-2 font-serif text-[14px] text-ox-ink">v1.0.0</p>
+            </div>
+          </Card>
+
+          <Card padding="lg" className="border-ox-danger/30">
+            <p className="font-mono text-[10px] uppercase tracking-[0.26em] text-ox-danger">Danger zone</p>
+            <h3 className="mt-2 font-display text-[24px] font-semibold text-ox-ink-deep">Clear all data</h3>
+            <p className="mt-3 font-serif text-[15px] leading-7 text-ox-muted">
+              Remove all words, review sessions, and local app state from your account. This cannot be undone.
+            </p>
+            <Button variant="danger" onClick={() => setShowClearModal(true)} className="mt-5 w-full sm:w-auto">
+              Clear Everything
+            </Button>
+          </Card>
+        </div>
       </div>
 
-      <Modal open={showClearModal} onClose={() => setShowClearModal(false)} title="Clear All Data">
-        <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-          This will permanently delete all your words, review sessions, and settings. This action cannot be undone.
+      <Modal open={showClearModal} onClose={() => setShowClearModal(false)} title="Clear all data">
+        <p className="mb-5 font-serif text-[15px] leading-7 text-ox-muted">
+          This permanently deletes your words, review sessions, and saved app state from the current account.
         </p>
-        <div className="flex gap-2 justify-end">
+        <div className="flex flex-col gap-3 sm:flex-row sm:justify-end">
           <Button variant="secondary" onClick={() => setShowClearModal(false)}>Cancel</Button>
           <Button variant="danger" onClick={handleClear}>Clear Everything</Button>
         </div>

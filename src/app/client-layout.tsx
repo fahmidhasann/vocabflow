@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 import { Header } from '@/components/layout/Header';
 import { BottomNav } from '@/components/layout/BottomNav';
 import { ToastProvider } from '@/components/ui/Toast';
@@ -9,6 +10,8 @@ import { createClient } from '@/lib/supabase/client';
 import { isNativePlatform } from '@/lib/platform';
 
 export function ClientLayout({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+
   useEffect(() => {
     const supabase = createClient();
     const { data: { subscription } } = supabase.auth.onAuthStateChange(() => {
@@ -23,14 +26,16 @@ export function ClientLayout({ children }: { children: React.ReactNode }) {
     import('@/lib/auth-native').then(m => m.setupNativeAuthListener());
   }, []);
 
+  const showAppChrome = pathname !== '/login' && pathname !== '/auth/callback';
+
   return (
     <ToastProvider>
       <AuthGuard>
-        <Header />
-        <main className="min-h-screen bg-gray-50 dark:bg-slate-900">
+        {showAppChrome && <Header />}
+        <main className="min-h-screen">
           {children}
         </main>
-        <BottomNav />
+        {showAppChrome && <BottomNav />}
       </AuthGuard>
     </ToastProvider>
   );

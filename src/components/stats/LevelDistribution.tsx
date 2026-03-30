@@ -21,19 +21,20 @@ export function LevelDistribution({ byStage, total }: LevelDistributionProps) {
         const count = byStage[stage] || 0;
         const pct = total > 0 ? (count / total) * 100 : 0;
         return (
-          <div key={stage}>
-            <div className="flex justify-between mb-1">
-              <span className="font-mono uppercase text-ox-muted" style={{ fontSize: '9px', letterSpacing: '2px' }}>
+          <div key={stage} className="rounded-2xl border border-ox-line bg-ox-surface-alt px-4 py-4">
+            <div className="mb-2 flex items-center justify-between gap-3">
+              <span className="font-mono text-[9px] uppercase tracking-[0.22em] text-ox-muted">
                 {SRS_STAGE_LABELS[stage]}
               </span>
-              <span className="font-mono text-ox-muted" style={{ fontSize: '9px' }}>{count}</span>
+              <span className="font-mono text-[10px] text-ox-muted">{count}</span>
             </div>
-            <div className="bg-ox-border rounded-sm overflow-hidden" style={{ height: '4px' }}>
+            <div className="h-2 overflow-hidden rounded-full bg-ox-border">
               <div
-                className="h-full rounded-sm transition-all duration-500"
+                className="h-full rounded-full transition-all duration-500"
                 style={{ width: `${pct}%`, background: barColors[stage] }}
               />
             </div>
+            <p className="mt-2 font-serif text-[13px] text-ox-muted">{Math.round(pct)}% of your library</p>
           </div>
         );
       })}

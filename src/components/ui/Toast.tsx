@@ -42,15 +42,15 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
   return (
     <ToastContext.Provider value={{ toast }}>
       {children}
-      <div className="fixed bottom-20 left-1/2 -translate-x-1/2 z-50 flex flex-col gap-2">
+      <div className="pointer-events-none fixed bottom-24 left-1/2 z-50 flex w-full max-w-md -translate-x-1/2 flex-col gap-2 px-4">
         {toasts.map((t) => (
           <div
             key={t.id}
-            className="flex overflow-hidden rounded-sm border border-ox-border bg-ox-surface animate-slide-up"
-            style={{ boxShadow: '0 2px 8px rgba(26,18,8,0.10)' }}
+            className="pointer-events-auto flex overflow-hidden rounded-2xl border border-ox-border bg-[linear-gradient(180deg,color-mix(in_srgb,var(--color-surface)_92%,white_8%),var(--color-surface))] animate-slide-up"
+            style={{ boxShadow: '0 16px 30px rgba(26,18,8,0.14)' }}
           >
-            <div className="w-[3px] flex-shrink-0" style={{ background: barColors[t.type] }} />
-            <p className="px-4 py-2.5 font-serif text-[13px] text-ox-ink-deep">{t.message}</p>
+            <div className="w-1.5 flex-shrink-0" style={{ background: barColors[t.type] }} />
+            <p className="px-4 py-3 font-serif text-[14px] text-ox-ink-deep">{t.message}</p>
           </div>
         ))}
       </div>

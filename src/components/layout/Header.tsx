@@ -1,16 +1,30 @@
 'use client';
 
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import { useUser } from '@/hooks/useUser';
 import { createClient } from '@/lib/supabase/client';
 
+const ROUTE_META: Record<string, { label: string; subtitle: string }> = {
+  '/': { label: 'Home', subtitle: 'Daily progress and review queue' },
+  '/add': { label: 'Add', subtitle: 'Capture words while they are fresh' },
+  '/review': { label: 'Review', subtitle: 'Focused spaced-repetition practice' },
+  '/words': { label: 'Words', subtitle: 'Browse and manage your vocabulary' },
+  '/stats': { label: 'Stats', subtitle: 'See how your vocabulary compounds' },
+  '/settings': { label: 'Settings', subtitle: 'Data, sync, and account controls' },
+};
+
 export function Header() {
   const { user } = useUser();
   const router = useRouter();
+  const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
+
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [pathname]);
 
   async function handleSignOut() {
     const supabase = createClient();
@@ -18,21 +32,40 @@ export function Header() {
     router.push('/login');
   }
 
+  const meta = Object.entries(ROUTE_META).find(([route]) => {
+    if (route === '/') return pathname === '/';
+    return pathname.startsWith(route);
+  })?.[1] ?? ROUTE_META['/'];
+  const showSubtitle = pathname !== '/';
+
   return (
     <header
-      className="sticky top-0 z-40 border-b border-ox-border bg-[rgba(245,240,232,0.96)] dark:bg-[rgba(28,23,16,0.96)] backdrop-blur-sm safe-area-top"
+      className="sticky top-0 z-40 border-b border-ox-line bg-[rgba(245,240,232,0.74)] backdrop-blur-xl safe-area-top dark:bg-[rgba(28,23,16,0.78)]"
     >
-      <div className="max-w-2xl mx-auto px-4 h-14 flex items-center justify-between">
-        <Link href="/" className="font-display font-bold italic text-ox-ink-deep" style={{ fontSize: '16px' }}>
-          VocabFlow
-        </Link>
-        <div className="flex items-center gap-1">
+      <div className="mx-auto flex h-16 max-w-3xl items-center justify-between gap-3 px-4">
+        <div className="min-w-0">
+          <Link href="/" className="inline-flex items-center gap-2 text-ox-ink-deep transition-colors hover:text-ox-accent">
+            <span className="rounded-full border border-ox-border bg-ox-surface px-2.5 py-1 font-mono text-[9px] uppercase tracking-[0.24em] text-ox-accent">
+              VF
+            </span>
+            <span className="font-display text-[19px] font-semibold italic">VocabFlow</span>
+          </Link>
+          {showSubtitle ? (
+            <p className="truncate font-serif text-[12px] text-ox-muted">{meta.subtitle}</p>
+          ) : (
+            <p className="font-mono text-[9px] uppercase tracking-[0.24em] text-ox-muted">
+              {meta.label}
+            </p>
+          )}
+        </div>
+
+        <div className="flex items-center gap-2">
           <ThemeToggle />
           {user && (
             <div className="relative">
               <button
                 onClick={() => setMenuOpen((o) => !o)}
-                className="w-8 h-8 rounded-full overflow-hidden border border-ox-border focus:outline-none focus:ring-2 focus:ring-ox-accent"
+                className="h-10 w-10 overflow-hidden rounded-full border border-ox-border bg-ox-surface focus:outline-none focus:ring-2 focus:ring-ox-accent"
                 aria-label="User menu"
               >
                 {user.user_metadata?.avatar_url ? (
@@ -43,7 +76,7 @@ export function Header() {
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <div className="w-full h-full bg-ox-accent flex items-center justify-center text-white font-mono text-[10px] font-medium">
+                  <div className="flex h-full w-full items-center justify-center bg-ox-accent text-[10px] font-medium text-white font-mono">
                     {(user.email ?? 'U')[0].toUpperCase()}
                   </div>
                 )}
@@ -55,19 +88,18 @@ export function Header() {
                     className="fixed inset-0 z-10"
                     onClick={() => setMenuOpen(false)}
                   />
-                  <div className="absolute right-0 mt-2 w-52 bg-ox-surface rounded-lg shadow-xl border border-ox-border z-20 overflow-hidden">
-                    <div className="px-4 py-3 border-b border-ox-border">
+                  <div className="absolute right-0 z-20 mt-2 w-64 overflow-hidden rounded-3xl border border-ox-border bg-[linear-gradient(180deg,color-mix(in_srgb,var(--color-surface)_90%,white_10%),var(--color-surface))] shadow-[0_24px_48px_rgba(26,18,8,0.16)]">
+                    <div className="border-b border-ox-line px-4 py-4">
                       <p className="font-serif text-[13px] text-ox-ink-deep truncate">
                         {user.user_metadata?.full_name ?? user.email}
                       </p>
-                      <p className="font-mono text-[10px] text-ox-muted truncate mt-0.5">
+                      <p className="mt-1 truncate font-mono text-[10px] text-ox-muted">
                         {user.email}
                       </p>
                     </div>
                     <button
                       onClick={handleSignOut}
-                      className="w-full text-left px-4 py-3 font-mono uppercase text-[#8b2020] hover:bg-ox-bg-dark transition-colors"
-                      style={{ fontSize: '10px', letterSpacing: '1px' }}
+                      className="w-full px-4 py-3 text-left font-mono text-[10px] uppercase tracking-[0.18em] text-ox-danger transition-colors hover:bg-ox-danger-soft"
                     >
                       Sign out
                     </button>

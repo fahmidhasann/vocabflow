@@ -27,43 +27,62 @@ export function ReviewCard({ word, showBack, onFlip }: ReviewCardProps) {
 
   return (
     <div
-      className="w-full max-w-md mx-auto rounded-lg border border-ox-border overflow-hidden"
+      className="mx-auto w-full max-w-2xl overflow-hidden rounded-[32px] border border-ox-border"
       style={{
-        background: 'var(--color-paper)',
-        boxShadow: '0 4px 20px rgba(26,18,8,0.07)',
+        background: showBack
+          ? 'linear-gradient(180deg, color-mix(in srgb, var(--color-surface) 88%, white 12%), var(--color-paper))'
+          : 'linear-gradient(180deg, color-mix(in srgb, var(--color-paper) 92%, white 8%), var(--color-surface))',
+        boxShadow: '0 26px 54px rgba(26,18,8,0.12)',
       }}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
-      {/* Word area — always visible, tappable when unrevealed */}
+      <div className="flex items-center justify-between border-b border-ox-line px-5 py-4">
+        <div>
+          <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-ox-muted">
+            {showBack ? 'Answer' : 'Prompt'}
+          </p>
+          <p className="mt-1 font-serif text-[13px] text-ox-muted">
+            {showBack ? 'Confirm the meaning, then rate recall.' : 'Recall the meaning before revealing it.'}
+          </p>
+        </div>
+        {!showBack && (
+          <span className="rounded-full border border-ox-border bg-ox-surface px-3 py-1 font-mono text-[9px] uppercase tracking-[0.18em] text-ox-muted">
+            Space / Tap
+          </span>
+        )}
+      </div>
+
       <div
-        className={`flex flex-col items-center justify-center px-6 pt-10 pb-8 ${!showBack ? 'cursor-pointer' : ''}`}
+        className={`flex min-h-[300px] flex-col items-center justify-center px-6 py-10 text-center ${!showBack ? 'cursor-pointer' : ''}`}
         onClick={!showBack ? onFlip : undefined}
       >
         <p
-          className="font-display font-bold text-ox-ink-deep text-center"
-          style={{ fontSize: '36px', letterSpacing: '-0.5px' }}
+          className="text-center font-display text-[42px] font-semibold leading-none text-ox-ink-deep md:text-[52px]"
         >
           {word.word}
         </p>
         {word.phonetic && (
-          <p className="font-serif font-light italic text-ox-muted mt-1" style={{ fontSize: '13px' }}>
+          <p className="mt-2 font-serif text-[15px] italic text-ox-muted">
             {word.phonetic}
           </p>
         )}
         {!showBack && (
-          <p className="font-mono uppercase text-ox-muted/50 mt-6" style={{ fontSize: '9px', letterSpacing: '2px' }}>
-            Tap to reveal
-          </p>
+          <div className="mt-8 rounded-2xl border border-ox-line bg-ox-surface px-5 py-4">
+            <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-ox-muted">
+              Reveal when you have your answer
+            </p>
+            <p className="mt-2 font-serif text-[14px] text-ox-muted">
+              Tap the card, press <span className="font-mono text-[11px] uppercase tracking-[0.16em] text-ox-ink">space</span>, or swipe down.
+            </p>
+          </div>
         )}
       </div>
 
-      {/* Definition area — fades in on reveal */}
       {showBack && (
         <div
-          className="border-t border-ox-border px-6 pb-8 pt-5 overflow-y-auto"
+          className="max-h-[55vh] overflow-y-auto border-t border-ox-line px-6 pb-8 pt-6"
           style={{
-            maxHeight: '55vh',
             animation: 'reveal-def 250ms ease-out both',
           }}
         >
@@ -73,28 +92,31 @@ export function ReviewCard({ word, showBack, onFlip }: ReviewCardProps) {
               to   { opacity: 1; transform: translateY(0); }
             }
           `}</style>
-          <div className="space-y-4">
+          <div className="space-y-5">
             {displayedMeanings.map((m, i) => (
-              <div key={i}>
+              <div key={i} className="rounded-2xl border border-ox-line bg-ox-surface/80 px-4 py-4">
                 {m.partOfSpeech && (
-                  <p className="font-mono uppercase text-ox-muted mb-1" style={{ fontSize: '9px', letterSpacing: '2px' }}>
+                  <p className="mb-2 font-mono text-[9px] uppercase tracking-[0.24em] text-ox-muted">
                     {m.partOfSpeech}
                   </p>
                 )}
-                <p className="font-serif text-ox-ink-deep" style={{ fontSize: '14px', lineHeight: '1.7' }}>
+                <p className="font-serif text-[16px] leading-7 text-ox-ink-deep">
                   {m.definition}
                 </p>
               </div>
             ))}
             {hiddenCount > 0 && (
-              <p className="font-serif italic text-ox-muted" style={{ fontSize: '13px' }}>
-                and {hiddenCount} more…
+              <p className="font-serif text-[14px] italic text-ox-muted">
+                and {hiddenCount} more...
               </p>
             )}
             {word.example && (
-              <p className="font-serif italic text-ox-muted pt-2 border-t border-ox-border" style={{ fontSize: '13px' }}>
-                &ldquo;{word.example}&rdquo;
-              </p>
+              <div className="rounded-2xl border border-ox-line bg-ox-surface-alt px-4 py-4">
+                <p className="mb-2 font-mono text-[9px] uppercase tracking-[0.22em] text-ox-muted">Example</p>
+                <p className="border-t border-ox-line pt-3 font-serif text-[14px] italic leading-7 text-ox-muted">
+                  &ldquo;{word.example}&rdquo;
+                </p>
+              </div>
             )}
           </div>
         </div>
