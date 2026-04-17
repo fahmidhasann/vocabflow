@@ -1,12 +1,8 @@
+import { Suspense } from 'react';
 import { LoginButton } from './LoginButton';
+import { LoginErrorNotice } from './LoginErrorNotice';
 
-export default function LoginPage({
-  searchParams,
-}: {
-  searchParams?: { error?: string };
-}) {
-  const hasError = searchParams?.error === 'auth_failed';
-
+export default function LoginPage() {
   return (
     <div className="relative flex min-h-screen items-center overflow-hidden px-4 py-10">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(196,168,74,0.18),transparent_26%),radial-gradient(circle_at_bottom_right,rgba(74,112,146,0.12),transparent_24%)]" />
@@ -46,14 +42,9 @@ export default function LoginPage({
               Use your Google account to sync your words, review sessions, and streak history across devices.
             </p>
 
-            {hasError && (
-              <div className="mt-6 rounded-2xl border border-ox-danger/30 bg-ox-danger-soft px-4 py-4">
-                <p className="font-mono text-[9px] uppercase tracking-[0.18em] text-ox-danger">Authentication failed</p>
-                <p className="mt-2 font-serif text-[14px] leading-6 text-ox-ink">
-                  The last sign-in attempt did not complete. Try again and you&apos;ll be returned to your dashboard.
-                </p>
-              </div>
-            )}
+            <Suspense fallback={null}>
+              <LoginErrorNotice />
+            </Suspense>
 
             <div className="mt-8">
               <LoginButton />

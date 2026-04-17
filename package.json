@@ -11,14 +11,18 @@
     "test:watch": "vitest",
     "build:mobile": "NEXT_PUBLIC_BUILD_TARGET=capacitor next build",
     "cap:sync": "npx cap sync",
-    "mobile:android": "npm run build:mobile && npm run cap:sync && npx cap open android"
+    "mobile:android": "npm run build:mobile && npm run cap:sync && npx cap open android",
+    "mobile:ios": "npm run build:mobile && npx cap sync ios && npx cap open ios"
   },
   "dependencies": {
     "@capacitor/app": "^8.0.1",
     "@capacitor/browser": "^8.0.2",
     "@capacitor/core": "^8.2.0",
+    "@capacitor/filesystem": "^8.1.2",
+    "@capacitor/share": "^8.0.1",
     "@capacitor/splash-screen": "^8.0.1",
     "@capacitor/status-bar": "^8.0.1",
+    "@capawesome/capacitor-file-picker": "^8.0.2",
     "@supabase/ssr": "^0.9.0",
     "@supabase/supabase-js": "^2.99.1",
     "next": "14.2.35",
@@ -30,6 +34,7 @@
     "@capacitor/android": "^8.2.0",
     "@capacitor/assets": "^3.0.5",
     "@capacitor/cli": "^8.2.0",
+    "@capacitor/ios": "^8.3.0",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",

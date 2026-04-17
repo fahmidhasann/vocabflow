@@ -7,6 +7,8 @@ import { Button } from '@/components/ui/Button';
 import { Modal } from '@/components/ui/Modal';
 import { useToast } from '@/components/ui/Toast';
 import { createClient } from '@/lib/supabase/client';
+import { exportBackup, pickImportedBackupText, type BackupPayload } from '@/lib/backup-transfer';
+import { isNativePlatform } from '@/lib/platform';
 import { wordToInsert, sessionToInsert, type WordRow, type ReviewSessionRow } from '@/lib/supabase/mappers';
 
 export default function SettingsPage() {
@@ -26,16 +28,9 @@ export default function SettingsPage() {
         words: wordsResult.data ?? [],
         reviewSessions: sessionsResult.data ?? [],
         exportedAt: new Date().toISOString(),
-      };
+      } satisfies BackupPayload;
 
-      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `vocabflow-export-${new Date().toISOString().split('T')[0]}.json`;
-      a.click();
-      URL.revokeObjectURL(url);
+      await exportBackup(data);
 
       toast('Data exported successfully');
     } catch {
@@ -43,71 +38,87 @@ export default function SettingsPage() {
     }
   }
 
-  async function handleImport(e: React.ChangeEvent<HTMLInputElement>) {
+  async function importBackupText(text: string) {
+    const data = JSON.parse(text);
+
+    if (!data.words || !Array.isArray(data.words)) {
+      throw new Error('Invalid format');
+    }
+
+    const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Not authenticated');
+
+    await supabase.from('words').delete().eq('user_id', user.id);
+    await supabase.from('review_sessions').delete().eq('user_id', user.id);
+
+    const now = new Date().toISOString();
+
+    if (data.words.length > 0) {
+      const rows = (data.words as WordRow[]).map((w) =>
+        wordToInsert(
+          {
+            word: w.word,
+            phonetic: w.phonetic ?? undefined,
+            meanings: w.meanings,
+            example: w.example ?? undefined,
+            notes: w.notes ?? undefined,
+            easeFactor: Number(w.ease_factor),
+            interval: w.interval,
+            repetitions: w.repetitions,
+            nextReviewDate: w.next_review_date,
+            srsStage: w.srs_stage,
+          },
+          user.id,
+          now
+        )
+      );
+      await supabase.from('words').insert(rows);
+    }
+
+    if (data.reviewSessions?.length > 0) {
+      const rows = (data.reviewSessions as ReviewSessionRow[]).map((s) =>
+        sessionToInsert(
+          {
+            date: s.date,
+            wordsReviewed: s.words_reviewed,
+            ratings: s.ratings,
+            duration: s.duration,
+            completedAt: s.completed_at,
+          },
+          user.id
+        )
+      );
+      await supabase.from('review_sessions').insert(rows);
+    }
+
+    toast(`Imported ${data.words.length} words`);
+  }
+
+  async function handleWebImport(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
 
     try {
-      const text = await file.text();
-      const data = JSON.parse(text);
-
-      if (!data.words || !Array.isArray(data.words)) {
-        throw new Error('Invalid format');
-      }
-
-      const supabase = createClient();
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('Not authenticated');
-
-      await supabase.from('words').delete().eq('user_id', user.id);
-      await supabase.from('review_sessions').delete().eq('user_id', user.id);
-
-      const now = new Date().toISOString();
-
-      if (data.words.length > 0) {
-        const rows = (data.words as WordRow[]).map((w) =>
-          wordToInsert(
-            {
-              word: w.word,
-              phonetic: w.phonetic ?? undefined,
-              meanings: w.meanings,
-              example: w.example ?? undefined,
-              notes: w.notes ?? undefined,
-              easeFactor: Number(w.ease_factor),
-              interval: w.interval,
-              repetitions: w.repetitions,
-              nextReviewDate: w.next_review_date,
-              srsStage: w.srs_stage,
-            },
-            user.id,
-            now
-          )
-        );
-        await supabase.from('words').insert(rows);
-      }
-
-      if (data.reviewSessions?.length > 0) {
-        const rows = (data.reviewSessions as ReviewSessionRow[]).map((s) =>
-          sessionToInsert(
-            {
-              date: s.date,
-              wordsReviewed: s.words_reviewed,
-              ratings: s.ratings,
-              duration: s.duration,
-              completedAt: s.completed_at,
-            },
-            user.id
-          )
-        );
-        await supabase.from('review_sessions').insert(rows);
-      }
-
-      toast(`Imported ${data.words.length} words`);
+      await importBackupText(await file.text());
     } catch {
       toast('Import failed. Check file format.', 'error');
     }
 
     if (fileInputRef.current) fileInputRef.current.value = '';
+  }
+
+  async function handleImport() {
+    if (!isNativePlatform()) {
+      fileInputRef.current?.click();
+      return;
+    }
+
+    try {
+      await importBackupText(await pickImportedBackupText());
+    } catch {
+      toast('Import failed. Check file format.', 'error');
+    }
   }
 
   async function handleClear() {
@@ -163,13 +174,13 @@ export default function SettingsPage() {
                 ref={fileInputRef}
                 type="file"
                 accept=".json"
-                onChange={handleImport}
+                onChange={handleWebImport}
                 className="hidden"
                 id="import-input"
               />
               <Button
                 variant="secondary"
-                onClick={() => fileInputRef.current?.click()}
+                onClick={handleImport}
                 className="mt-4 w-full sm:w-auto"
               >
                 Import Data

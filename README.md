@@ -1,36 +1,93 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# VocabFlow
 
-## Getting Started
+VocabFlow is a Next.js vocabulary trainer with spaced repetition, Supabase sync, and Capacitor shells for native mobile apps.
 
-First, run the development server:
+## Commands
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm run build
+npm run lint
+npm run test
+
+# Capacitor/mobile
+npm run build:mobile
+npm run cap:sync
+npm run mobile:android
+npm run mobile:ios
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Web App
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- `npm run dev` starts the web app on `http://localhost:3000`.
+- `npm run build` verifies the standard Next.js production build.
+- `npm run build:mobile` produces the static `out/` export used by Capacitor.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Mobile Apps
 
-## Learn More
+The repo now contains two Capacitor platform targets:
 
-To learn more about Next.js, take a look at the following resources:
+- [android/](./android)
+- [ios/](./ios)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Both native shells use the same exported web build from `out/`.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Android
 
-## Deploy on Vercel
+```bash
+npm run mobile:android
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+This rebuilds the static app, syncs Capacitor, and opens Android Studio.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### iOS
+
+```bash
+npm run mobile:ios
+```
+
+This rebuilds the static app, syncs the iOS project, and opens Xcode.
+
+Current iOS setup uses Swift Package Manager, so CocoaPods is not required for this repo.
+
+#### iOS prerequisites
+
+1. Install the full Xcode app from the App Store.
+2. Point `xcode-select` at Xcode instead of Command Line Tools:
+
+```bash
+sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
+```
+
+3. Open Xcode once and allow it to install any required components.
+4. If you want simulator/device builds from the command line, verify:
+
+```bash
+xcodebuild -version
+```
+
+#### iOS workflow
+
+1. Run `npm run build:mobile`.
+2. Run `npx cap sync ios` if you changed web code or plugin dependencies.
+3. Run `npm run mobile:ios` or open `ios/App/App.xcodeproj` directly in Xcode.
+4. Select a simulator or connected device and run the app from Xcode.
+
+## Native-specific Notes
+
+- OAuth deep linking uses `com.vocabflow.app://auth/callback`.
+- iOS and Android both use Capacitor-native browser auth for Google sign-in.
+- Settings export/import now uses native file handling on mobile:
+  export writes a JSON backup and opens the share sheet;
+  import uses a native file picker.
+
+## Verification
+
+The following checks are expected to pass before shipping:
+
+```bash
+npm run lint
+npm run test
+npm run build
+npm run build:mobile
+```
