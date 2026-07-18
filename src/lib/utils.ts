@@ -1,3 +1,5 @@
+import type { Word } from '@/types';
+
 export function todayDateString(): string {
   return new Date().toISOString().split('T')[0];
 }
@@ -33,3 +35,44 @@ export function formatDuration(seconds: number): string {
 export function cn(...classes: (string | boolean | undefined | null)[]): string {
   return classes.filter(Boolean).join(' ');
 }
+
+export function matchesWordSearch(word: Word, query: string): boolean {
+  const term = query.trim().toLowerCase();
+  if (!term) return true;
+
+  if (word.word.toLowerCase().includes(term)) return true;
+  if (word.phonetic?.toLowerCase().includes(term)) return true;
+  if (word.example?.toLowerCase().includes(term)) return true;
+  if (word.notes?.toLowerCase().includes(term)) return true;
+
+  if (
+    Array.isArray(word.meanings) &&
+    word.meanings.some(
+      (m) =>
+        m.definition?.toLowerCase().includes(term) ||
+        m.partOfSpeech?.toLowerCase().includes(term)
+    )
+  ) {
+    return true;
+  }
+
+  if (
+    word.usageMap?.domains &&
+    Array.isArray(word.usageMap.domains) &&
+    word.usageMap.domains.some(
+      (d) =>
+        d.domain?.toLowerCase().includes(term) ||
+        (Array.isArray(d.patterns) &&
+          d.patterns.some(
+            (p) =>
+              p.pattern?.toLowerCase().includes(term) ||
+              p.meaning?.toLowerCase().includes(term)
+          ))
+    )
+  ) {
+    return true;
+  }
+
+  return false;
+}
+

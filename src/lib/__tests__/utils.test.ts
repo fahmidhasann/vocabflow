@@ -6,7 +6,83 @@ import {
   daysFromNow,
   formatDuration,
   cn,
+  matchesWordSearch,
 } from '../utils';
+import type { Word } from '@/types';
+
+const sampleWord: Word = {
+  id: '1',
+  word: 'Hubris',
+  phonetic: '/ˈhjuː.brɪs/',
+  meanings: [
+    { partOfSpeech: 'noun', definition: 'Excessive pride or dangerous self-confidence, arrogance.' },
+  ],
+  example: 'His hubris eventually led to his tragic downfall.',
+  notes: 'Key vocabulary term for classical literature.',
+  easeFactor: 2.5,
+  interval: 1,
+  repetitions: 0,
+  nextReviewDate: '2024-06-15',
+  srsStage: 'new',
+  createdAt: '2024-06-15T00:00:00Z',
+  updatedAt: '2024-06-15T00:00:00Z',
+  usageMap: {
+    word: 'Hubris',
+    domains: [
+      {
+        domain: 'Literary Analysis',
+        patterns: [
+          { pattern: 'tragic hubris', meaning: 'flaw leading to downfall' },
+        ],
+      },
+    ],
+  },
+};
+
+describe('matchesWordSearch', () => {
+  it('returns true for empty or whitespace query', () => {
+    expect(matchesWordSearch(sampleWord, '')).toBe(true);
+    expect(matchesWordSearch(sampleWord, '   ')).toBe(true);
+  });
+
+  it('matches word term case-insensitively', () => {
+    expect(matchesWordSearch(sampleWord, 'hubris')).toBe(true);
+    expect(matchesWordSearch(sampleWord, 'HUBRIS')).toBe(true);
+    expect(matchesWordSearch(sampleWord, 'Hub')).toBe(true);
+  });
+
+  it('matches definition in meanings (e.g. Arrogance)', () => {
+    expect(matchesWordSearch(sampleWord, 'Arrogance')).toBe(true);
+    expect(matchesWordSearch(sampleWord, 'arrogance')).toBe(true);
+    expect(matchesWordSearch(sampleWord, 'self-confidence')).toBe(true);
+  });
+
+  it('matches partOfSpeech in meanings', () => {
+    expect(matchesWordSearch(sampleWord, 'noun')).toBe(true);
+  });
+
+  it('matches phonetic', () => {
+    expect(matchesWordSearch(sampleWord, 'hjuː')).toBe(true);
+  });
+
+  it('matches example sentence', () => {
+    expect(matchesWordSearch(sampleWord, 'tragic downfall')).toBe(true);
+  });
+
+  it('matches notes', () => {
+    expect(matchesWordSearch(sampleWord, 'classical literature')).toBe(true);
+  });
+
+  it('matches usage map domain, pattern, or meaning', () => {
+    expect(matchesWordSearch(sampleWord, 'Literary Analysis')).toBe(true);
+    expect(matchesWordSearch(sampleWord, 'flaw leading')).toBe(true);
+  });
+
+  it('returns false when no field matches query', () => {
+    expect(matchesWordSearch(sampleWord, 'banana')).toBe(false);
+    expect(matchesWordSearch(sampleWord, 'Apple')).toBe(false);
+  });
+});
 
 describe('todayDateString', () => {
   it('returns a string in YYYY-MM-DD format', () => {

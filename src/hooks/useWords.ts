@@ -5,7 +5,7 @@ import { createClient } from '@/lib/supabase/client';
 import { rowToWord, wordToInsert, wordToUpdate, type WordRow } from '@/lib/supabase/mappers';
 import type { Word, Meaning, SrsStage, UsageMap } from '@/types';
 import { newWordSrsFields } from '@/lib/srs';
-import { todayDateString } from '@/lib/utils';
+import { todayDateString, matchesWordSearch } from '@/lib/utils';
 import { emit, subscribe } from '@/lib/events';
 
 export function useWords(filter?: { stage?: SrsStage; search?: string }) {
@@ -21,10 +21,15 @@ export function useWords(filter?: { stage?: SrsStage; search?: string }) {
         .order('created_at', { ascending: false });
 
       if (filter?.stage) query = query.eq('srs_stage', filter.stage);
-      if (filter?.search) query = query.ilike('word', `%${filter.search}%`);
 
       const { data } = await query;
-      setWords(data ? (data as WordRow[]).map(rowToWord) : []);
+      let mapped = data ? (data as WordRow[]).map(rowToWord) : [];
+
+      if (filter?.search) {
+        mapped = mapped.filter((w) => matchesWordSearch(w, filter.search!));
+      }
+
+      setWords(mapped);
     }
 
     fetch();

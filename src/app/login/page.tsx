@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import { LoginButton } from './LoginButton';
+import { EmailAuthForm } from './EmailAuthForm';
 import { LoginErrorNotice } from './LoginErrorNotice';
 
 export default function LoginPage() {
@@ -39,7 +39,7 @@ export default function LoginPage() {
               Continue where you left off
             </h2>
             <p className="mt-3 font-serif text-[15px] leading-7 text-ox-muted">
-              Use your Google account to sync your words, review sessions, and streak history across devices.
+              Enter your email address to receive a secure 6-digit verification code or magic link.
             </p>
 
             <Suspense fallback={null}>
@@ -47,7 +47,7 @@ export default function LoginPage() {
             </Suspense>
 
             <div className="mt-8">
-              <LoginButton />
+              <EmailAuthForm />
             </div>
 
             <p className="mt-6 font-serif text-[13px] leading-6 text-ox-muted">
@@ -59,3 +59,4 @@ export default function LoginPage() {
     </div>
   );
 }
+
